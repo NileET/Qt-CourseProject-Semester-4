@@ -13,9 +13,11 @@ protected:
 public:
     Device();
 
-    Device(const std::string   modelName,
+    Device(const std::string   manufacturer,
+           const std::string   modelName,
            const int           portCount,
-           const Size          modelSize);
+           const Size          modelSize,
+           const int           price);
 
     Device(const Device& rhs);
 
@@ -24,6 +26,9 @@ public:
     virtual ~Device();
 
     friend std::ostream& operator<<(std::ostream& stream, const Device& item);
+
+    void setManufacturer(const std::string& manufacturer);
+    std::string getManufacturer() const;
 
     void setModelName(const std::string& modelName);
     std::string getModelName() const;
@@ -34,10 +39,15 @@ public:
     void setModelSize(const Size& modelSize);
     Size getModelSize() const;
 
+    void setPrice(const int& price);
+    int getPrice() const;
+
 private:
+    std::string _manufacturer;
     std::string _modelName;
     int _portCount;
     Size _modelSize;
+    int _price;
 };
 
 

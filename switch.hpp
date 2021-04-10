@@ -3,14 +3,17 @@
 #include "device.hpp"
 
 
-class Switch : public Device{
+class Switch : public Device {
 public:
     Switch();
 
-    Switch(const std::string         modelName,
+    Switch(const std::string         manafacturer,
+           const std::string         modelName,
            const std::pair<int, int> baseSpeed,
            const int                 portCount,
-           const Size                modelSize);
+           const bool                hasPoE,
+           const Size                modelSize,
+           const int                 price);
 
     Switch(const Switch& rhs);
 
@@ -20,11 +23,15 @@ public:
 
     friend std::ostream& operator<<(std::ostream& stream, const Switch& item);
 
-    void setBaseSpeed(const std::pair<int, int>& baseSpeed);
+    void setBaseSpeed(const std::pair<int, int>& hasPoE);
     std::pair<int, int> getBaseSpeed() const;
+
+    void setHasPoE(const bool& baseSpeed);
+    bool getHasPoE() const;
 
 private:
     std::pair<int, int> _baseSpeed;
+    bool _hasPoE;
 };
 
 
