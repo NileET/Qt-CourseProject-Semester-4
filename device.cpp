@@ -49,7 +49,7 @@ std::ostream& operator<<(std::ostream& stream, const Device& item) {
            << " Dimensions:\n\t width  - " << item._modelSize.__width  << " mm"
            <<             "\n\t length - " << item._modelSize.__length << " mm"
            <<             "\n\t high   - " << item._modelSize.__high   << " mm"
-           << " Price: "                   << item._price              << std::endl;
+           << " Price: "                   << item._price              << " ₽" << std::endl;
     return stream;
 }
 

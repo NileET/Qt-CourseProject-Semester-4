@@ -46,7 +46,7 @@ std::ostream& operator<<(std::ostream& stream, const Switch& item) {
            << " Dimensions:\n\t width  - "  << item.getModelSize().__width  << " mm"
            <<             "\n\t length - "  << item.getModelSize().__length << " mm"
            <<             "\n\t high   - "  << item.getModelSize().__high   << " mm"
-           << " Price: "                    << item.getPrice()              << std::endl;
+           << " Price: "                    << item.getPrice()              << " ₽" << std::endl;
     return stream;
 }
 
