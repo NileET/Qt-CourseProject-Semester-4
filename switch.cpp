@@ -1,5 +1,6 @@
 #include "switch.hpp"
 #include <iostream>
+#include <QDebug>
 
 Switch::Switch() :
       Device()

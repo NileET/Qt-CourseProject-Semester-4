@@ -7,7 +7,7 @@ class Switch : public Device {
 public:
     Switch();
 
-    Switch(const std::string         manafacturer,
+    Switch(const std::string         manufacturer,
            const std::string         modelName,
            const std::pair<int, int> baseSpeed,
            const int                 portCount,

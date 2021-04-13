@@ -21,7 +21,8 @@ Device::Device(const std::string   manufacturer,
 { }
 
 Device::Device(const Device& rhs) :
-      _modelName(rhs._modelName)
+      _manufacturer(rhs._manufacturer)
+    , _modelName(rhs._modelName)
     , _portCount(rhs._portCount)
     , _modelSize(rhs._modelSize)
     , _price(rhs._price)

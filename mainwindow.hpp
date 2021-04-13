@@ -27,5 +27,6 @@ private:
   QList<Switch> _switches;
 
   void openFile(const QString& fullFileName);
+  void saveFile(const QString& fullFileName);
 };
 #endif // MAINWINDOW_HPP
