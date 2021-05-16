@@ -23,7 +23,9 @@ FORMS += \
     mainwindow.ui
 
 TRANSLATIONS += \
-    CouseProject_ru_RU.ts
+    translations/CourseProject_ru_RU.ts \
+    translations/CourseProject_en_US.ts \
+    translations/CourseProject_de_DE.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
