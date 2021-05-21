@@ -1,5 +1,7 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
+#include "aboutprogramm.hpp"
+#include "tablemodel.hpp"
 
 #include <QFileDialog>
 #include <QFile>
@@ -12,18 +14,24 @@
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
+  , _switches(new TableModel(this))
 {
   ui->setupUi(this);
 
-  qApp->installTranslator(&appTranslator);
+  ui->tableView->setModel(_switches);
+  ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
+  qApp->installTranslator(&appTranslator);
   qmPath = qApp->applicationDirPath() + "/translations";
+
+  connect(ui->actionAboutProgramm, &QAction::triggered, this, &MainWindow::aboutProgramm);
 
   createLanguageMenu();
 }
 
 MainWindow::~MainWindow()
 {
+  delete _switches;
   delete ui;
 }
 
@@ -124,21 +132,23 @@ void MainWindow::openFile(const QString& fullFileName)
 
       int price = list[6].toInt();
 
-      _switches.push_back(Switch(manufacturer, modelName, baseSpeed, portCount, hasPoE, {width, length, high}, price));
+      _switches->insertValue(Switch(manufacturer, modelName, baseSpeed, portCount, hasPoE, {width, length, high}, price));
     }
 
   QApplication::restoreOverrideCursor();
 
+  ui->tableView->resizeColumnsToContents();
+
   ui->actionSave->setEnabled(true);
-  ui->actionShow->setEnabled(true);
   ui->actionClose->setEnabled(true);
   ui->menuEntry->setEnabled(true);
 }
 
-
 void MainWindow::on_actionSave_triggered()
 {
-  QString fileName = QFileDialog::getSaveFileName(this, tr("Save Document"));
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save Document"),
+                                                  QDir::currentPath(),
+                                                  "Text Files (*.txt);;All Files (*.*)");
   if (!fileName.isEmpty()) {
       saveFile(fileName);
     }
@@ -158,7 +168,7 @@ void MainWindow::saveFile(const QString &fullFileName)
   QTextStream out(&file);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  foreach (const auto& it, _switches) {
+  foreach (const auto& it, _switches->getList()) {
       out << it.getManufacturer().c_str() << ';'
           << it.getModelName().c_str()    << ';'
           << it.getBaseSpeed().first      << ' '
@@ -172,4 +182,14 @@ void MainWindow::saveFile(const QString &fullFileName)
     }
 
   QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::aboutProgramm()
+{
+  auto aboutWin = new AboutProgramm(this);
+  aboutWin->setWindowFlag(Qt::Window);
+  aboutWin->setWindowTitle(tr("About programm"));
+  aboutWin->setFixedSize(aboutWin->size());
+  aboutWin->setAttribute(Qt::WA_DeleteOnClose);
+  aboutWin->show();
 }
