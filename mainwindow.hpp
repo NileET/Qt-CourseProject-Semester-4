@@ -23,10 +23,14 @@ public:
 private slots:
   void switchLanguage(QAction *action);
 
-  void on_actionOpen_triggered();
-  void on_actionSave_triggered();
+  void actionOpen_triggered();
+  void actionSave_triggered();
+  void actionClose_triggered();
 
   void aboutProgramm();
+  void customMenuRequested(QPoint pos);
+  void actionAdd_triggered();
+  void actionRemove_triggered();
 
 private:
   Ui::MainWindow *ui;

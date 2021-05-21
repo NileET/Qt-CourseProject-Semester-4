@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
+  this->setWindowTitle(tr("Switch"));
+
   ui->tableView->setModel(_switches);
   ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
@@ -25,6 +27,15 @@ MainWindow::MainWindow(QWidget *parent)
   qmPath = qApp->applicationDirPath() + "/translations";
 
   connect(ui->actionAboutProgramm, &QAction::triggered, this, &MainWindow::aboutProgramm);
+
+  connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
+
+  connect(ui->actionOpen  , &QAction::triggered, this, &MainWindow::actionOpen_triggered);
+  connect(ui->actionSave  , &QAction::triggered, this, &MainWindow::actionSave_triggered);
+  connect(ui->actionClose , &QAction::triggered, this, &MainWindow::actionClose_triggered);
+
+  connect(ui->actionAdd   , &QAction::triggered, this, &MainWindow::actionAdd_triggered);
+  connect(ui->actionRemove, &QAction::triggered, this, &MainWindow::actionRemove_triggered);
 
   createLanguageMenu();
 }
@@ -86,9 +97,14 @@ void MainWindow::createLanguageMenu()
     }
 }
 
-void MainWindow::on_actionOpen_triggered()
+void MainWindow::actionOpen_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open Document"));
+
+  if (!_switches->rowCount(QModelIndex())) {
+
+      return;
+    }
 
   if (!fileName.isEmpty()) {
       openFile(fileName);
@@ -144,7 +160,7 @@ void MainWindow::openFile(const QString& fullFileName)
   ui->menuEntry->setEnabled(true);
 }
 
-void MainWindow::on_actionSave_triggered()
+void MainWindow::actionSave_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this, tr("Save Document"),
                                                   QDir::currentPath(),
@@ -184,6 +200,12 @@ void MainWindow::saveFile(const QString &fullFileName)
   QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::actionClose_triggered()
+{
+
+  _switches->clear();
+}
+
 void MainWindow::aboutProgramm()
 {
   auto aboutWin = new AboutProgramm(this);
@@ -192,4 +214,41 @@ void MainWindow::aboutProgramm()
   aboutWin->setFixedSize(aboutWin->size());
   aboutWin->setAttribute(Qt::WA_DeleteOnClose);
   aboutWin->show();
+}
+
+void MainWindow::customMenuRequested(QPoint pos)
+{
+  QMenu *menu = new QMenu(this);
+
+
+  menu->addAction(ui->actionAdd);
+  menu->addAction(ui->actionRemove);
+  // Вызываем контекстное меню
+  menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
+}
+
+void MainWindow::actionAdd_triggered()
+{
+  if (!_switches->rowCount(QModelIndex())) {
+      QMessageBox::warning(this,
+                           tr("Error of appending"),
+                           tr("Can not append entry. Probably, table is empty..."));
+      return;
+    }
+
+  _switches->insertValue(Switch());
+  ui->tableView->resizeColumnsToContents();
+}
+
+void MainWindow::actionRemove_triggered()
+{
+  if (!_switches->rowCount(QModelIndex())) {
+      QMessageBox::warning(this,
+                           tr("Error of removing"),
+                           tr("Can not removing entry. Probably, table is empty..."));
+      return;
+    }
+
+  _switches->removeValue(ui->tableView->currentIndex().row());
+  ui->tableView->resizeColumnsToContents();
 }

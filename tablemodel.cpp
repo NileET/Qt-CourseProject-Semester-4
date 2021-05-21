@@ -127,8 +127,22 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
   return QVariant();
 }
 
+void TableModel::clear()
+{
+  _switches.clear();
+  emit layoutChanged();
+}
+
+void TableModel::removeValue(int row)
+{
+  _switches.removeAt(row);
+  emit layoutChanged();
+}
+
 void TableModel::insertValue(const Switch &value)
 {
   _switches << value;
   emit layoutChanged();
 }
+
+

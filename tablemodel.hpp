@@ -22,8 +22,9 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const;
   QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
+  void clear();
+  void removeValue(int row);
   void insertValue(const Switch &value);
-  void removeValue();
 
   QList<Switch> getList() const {return _switches;}
 
