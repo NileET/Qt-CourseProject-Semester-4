@@ -39,7 +39,7 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
       if (index.column() == 4)
           return QString::number(sw.getPortCount());
       if (index.column() == 5)
-          return sw.getHasPoE() ? tr("Yes") : tr("No");
+          return sw.getHasPoE();
       if (index.column() == 6) {
           auto size = sw.getModelSize();
           return QString("%1x%2x%3").arg(size.__width).arg(size.__length).arg(size.__high);
@@ -64,23 +64,23 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
       switch (index.column()) {
         case 1:
-          sw.setManufacturer(value.toString().toStdString()); break;
+            sw.setManufacturer(value.toString().toStdString()); break;
         case 2:
-          sw.setModelName(value.toString().toStdString()); break;
+            sw.setModelName(value.toString().toStdString()); break;
         case 3:
           {
-            auto speedList = value.toStringList();
+            QStringList speedList;
+            if (value.toString().contains(','))
+              speedList = value.toString().split(",");
+            else
+              speedList = value.toStringList();
             std::pair speed = std::make_pair(speedList[0].toInt(), speedList[1].toInt());
             sw.setBaseSpeed(speed); break;
           }
         case 4:
-          sw.setPortCount(value.toInt()); break;
+            sw.setPortCount(value.toInt()); break;
         case 5:
-          {
-            QString strPoE = value.toString();
-            bool PoE = strPoE == tr("Yes") ? true : false;
-            sw.setHasPoE(PoE); break;
-          }
+            sw.setHasPoE(value.toBool()); break;
         case 6:
           {
             QStringList listSize = value.toString().split("x");
@@ -90,7 +90,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
             sw.setModelSize({width, length, high});
           }
         case 7:
-          sw.setPrice(value.toInt()); break;
+            sw.setPrice(value.toInt()); break;
         }
 
       return true;

@@ -10,18 +10,22 @@ CONFIG += c++17
 
 SOURCES += \
     aboutprogramm.cpp \
+    checkboxdelegate.cpp \
     device.cpp \
     main.cpp \
     mainwindow.cpp \
     proxymodel.cpp \
+    spinboxdelegate.cpp \
     switch.cpp \
     tablemodel.cpp
 
 HEADERS += \
     aboutprogramm.hpp \
+    checkboxdelegate.hpp \
     device.hpp \
     mainwindow.hpp \
     proxymodel.hpp \
+    spinboxdelegate.hpp \
     switch.hpp \
     tablemodel.hpp
 

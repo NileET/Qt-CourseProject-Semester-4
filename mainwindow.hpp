@@ -37,6 +37,7 @@ private:
   Ui::MainWindow *ui;
   TableModel *_switches;
   ProxyModel *proxyModel;
+  QMenu *menu;
 
   QTranslator appTranslator;
   QActionGroup *languageActionGroup;

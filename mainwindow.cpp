@@ -3,6 +3,8 @@
 #include "aboutprogramm.hpp"
 #include "tablemodel.hpp"
 #include "proxymodel.hpp"
+#include "spinboxdelegate.hpp"
+#include "checkboxdelegate.hpp"
 
 #include <QFileDialog>
 #include <QFile>
@@ -17,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
   , ui(new Ui::MainWindow)
   , _switches(new TableModel(this))
   , proxyModel(new ProxyModel(this))
+  , menu(new QMenu(this))
 {
   ui->setupUi(this);
 
@@ -27,16 +30,24 @@ MainWindow::MainWindow(QWidget *parent)
   ui->tableView->setSortingEnabled(true);
   // Сортировка по id
   ui->tableView->sortByColumn(0, Qt::AscendingOrder);
+  // Задаем необходимые делегаты для некоторых столбцов
+  ui->tableView->setItemDelegateForColumn(4, new SpinBoxDelegate(4, this));
+  ui->tableView->setItemDelegateForColumn(7, new SpinBoxDelegate(7, this));
+  ui->tableView->setItemDelegateForColumn(5, new CheckBoxDelegate(this));
   // Растягивание последнего столбца
   ui->tableView->horizontalHeader()->setStretchLastSection(true);
   // Выравнивание колонок по содержимому таблицы
   ui->tableView->resizeColumnsToContents();
+  // Добавляем события в контекстное меню таблицы
+  menu->addAction(ui->actionAdd);
+  menu->addAction(ui->actionRemove);
   // Установка переводчика
   qApp->installTranslator(&appTranslator);
   // Местоположение каталога с файлами перевода
   qmPath = qApp->applicationDirPath() + "/translations";
-
+  // Вызов коннектов
   createConnections();
+  // Создание языкового меню
   createLanguageMenu();
 }
 
@@ -171,7 +182,7 @@ void MainWindow::openFile(const QString& fullFileName)
   QApplication::restoreOverrideCursor();
 
   proxyModel->setSourceModel(_switches);
-
+  ui->tableView->hideColumn(0);
   ui->tableView->resizeColumnsToContents();
 
   ui->actionSave->setEnabled(true);
@@ -241,12 +252,7 @@ void MainWindow::actionClose_triggered()
 
 void MainWindow::customMenuRequested(QPoint pos)
 {
-  QMenu *menu = new QMenu(this);
-
-
-  menu->addAction(ui->actionAdd);
-  menu->addAction(ui->actionRemove);
-  // Вызываем контекстное меню
+  // Вызываем контекстное меню для таблицы
   menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
 }
 
@@ -261,10 +267,12 @@ void MainWindow::actionAdd_triggered()
 
   proxyModel->setSourceModel(nullptr);
 
+  // Добавление записи
   _switches->insertValue(Switch());
 
   proxyModel->setSourceModel(_switches);
 
+  ui->tableView->hideColumn(0);
   ui->tableView->resizeColumnsToContents();
 }
 
@@ -281,9 +289,11 @@ void MainWindow::actionRemove_triggered()
 
   proxyModel->setSourceModel(nullptr);
 
+  // Удаление записи
   _switches->removeValue(tableID);
 
   proxyModel->setSourceModel(_switches);
 
+  ui->tableView->hideColumn(0);
   ui->tableView->resizeColumnsToContents();
 }
