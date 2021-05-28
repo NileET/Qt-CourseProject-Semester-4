@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "aboutprogramm.hpp"
 #include "tablemodel.hpp"
+#include "proxymodel.hpp"
 
 #include <QFileDialog>
 #include <QFile>
@@ -15,34 +16,53 @@ MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
   , _switches(new TableModel(this))
+  , proxyModel(new ProxyModel(this))
 {
   ui->setupUi(this);
 
   this->setWindowTitle(tr("Switch"));
 
-  ui->tableView->setModel(_switches);
+  ui->tableView->setModel(proxyModel);
+  // Включение сортировки
+  ui->tableView->setSortingEnabled(true);
+  // Сортировка по id
+  ui->tableView->sortByColumn(0, Qt::AscendingOrder);
+  // Растягивание последнего столбца
   ui->tableView->horizontalHeader()->setStretchLastSection(true);
-
+  // Выравнивание колонок по содержимому таблицы
+  ui->tableView->resizeColumnsToContents();
+  // Установка переводчика
   qApp->installTranslator(&appTranslator);
+  // Местоположение каталога с файлами перевода
   qmPath = qApp->applicationDirPath() + "/translations";
 
-  connect(ui->actionAboutProgramm, &QAction::triggered, this, &MainWindow::aboutProgramm);
-
-  connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
-
-  connect(ui->actionOpen  , &QAction::triggered, this, &MainWindow::actionOpen_triggered);
-  connect(ui->actionSave  , &QAction::triggered, this, &MainWindow::actionSave_triggered);
-  connect(ui->actionClose , &QAction::triggered, this, &MainWindow::actionClose_triggered);
-
-  connect(ui->actionAdd   , &QAction::triggered, this, &MainWindow::actionAdd_triggered);
-  connect(ui->actionRemove, &QAction::triggered, this, &MainWindow::actionRemove_triggered);
-
+  createConnections();
   createLanguageMenu();
+}
+
+void MainWindow::createConnections()
+{
+  // Вызов "О программе"
+  connect(ui->actionAboutProgramm, &QAction::triggered,  this, &MainWindow::aboutProgramm);
+  // Вызов контекстного меню
+  connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
+  // Вызов открытия файла
+  connect(ui->actionOpen  , &QAction::triggered, this, &MainWindow::actionOpen_triggered);
+  // Вызов сохранения файла
+  connect(ui->actionSave  , &QAction::triggered, this, &MainWindow::actionSave_triggered);
+  // Вызов закрытия файла
+  connect(ui->actionClose , &QAction::triggered, this, &MainWindow::actionClose_triggered);
+  // Вызов добавления записи
+  connect(ui->actionAdd   , &QAction::triggered, this, &MainWindow::actionAdd_triggered);
+  // Вызов удаления записи
+  connect(ui->actionRemove, &QAction::triggered, this, &MainWindow::actionRemove_triggered);
 }
 
 MainWindow::~MainWindow()
 {
+  delete proxyModel;
   delete _switches;
+  delete languageActionGroup;
   delete ui;
 }
 
@@ -60,11 +80,8 @@ void MainWindow::switchLanguage(QAction *action)
 void MainWindow::createLanguageMenu()
 {
   languageActionGroup = new QActionGroup(this);
-
   // Ставим связь пунктов меню со слотом смены языка приложения
-  connect(languageActionGroup, &QActionGroup::triggered,
-          this, &MainWindow::switchLanguage);
-
+  connect(languageActionGroup, &QActionGroup::triggered, this, &MainWindow::switchLanguage);
   // Определяем каталог, где лежат файлы переводов "*.qm"
   QDir dir(qmPath);
 
@@ -99,12 +116,12 @@ void MainWindow::createLanguageMenu()
 
 void MainWindow::actionOpen_triggered()
 {
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Document"));
-
-  if (!_switches->rowCount(QModelIndex())) {
+  if (_switches->rowCount(QModelIndex())) {
 
       return;
     }
+
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Document"));
 
   if (!fileName.isEmpty()) {
       openFile(fileName);
@@ -153,6 +170,8 @@ void MainWindow::openFile(const QString& fullFileName)
 
   QApplication::restoreOverrideCursor();
 
+  proxyModel->setSourceModel(_switches);
+
   ui->tableView->resizeColumnsToContents();
 
   ui->actionSave->setEnabled(true);
@@ -184,7 +203,7 @@ void MainWindow::saveFile(const QString &fullFileName)
   QTextStream out(&file);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  foreach (const auto& it, _switches->getList()) {
+  foreach (const auto& it, _switches->toQMap()) {
       out << it.getManufacturer().c_str() << ';'
           << it.getModelName().c_str()    << ';'
           << it.getBaseSpeed().first      << ' '
@@ -200,12 +219,6 @@ void MainWindow::saveFile(const QString &fullFileName)
   QApplication::restoreOverrideCursor();
 }
 
-void MainWindow::actionClose_triggered()
-{
-
-  _switches->clear();
-}
-
 void MainWindow::aboutProgramm()
 {
   auto aboutWin = new AboutProgramm(this);
@@ -214,6 +227,16 @@ void MainWindow::aboutProgramm()
   aboutWin->setFixedSize(aboutWin->size());
   aboutWin->setAttribute(Qt::WA_DeleteOnClose);
   aboutWin->show();
+}
+
+void MainWindow::actionClose_triggered()
+{
+  proxyModel->setSourceModel(nullptr);
+  _switches->clear();
+
+  ui->actionSave->setEnabled(false);
+  ui->actionClose->setEnabled(false);
+  ui->menuEntry->setEnabled(false);
 }
 
 void MainWindow::customMenuRequested(QPoint pos)
@@ -236,7 +259,12 @@ void MainWindow::actionAdd_triggered()
       return;
     }
 
+  proxyModel->setSourceModel(nullptr);
+
   _switches->insertValue(Switch());
+
+  proxyModel->setSourceModel(_switches);
+
   ui->tableView->resizeColumnsToContents();
 }
 
@@ -249,6 +277,13 @@ void MainWindow::actionRemove_triggered()
       return;
     }
 
-  _switches->removeValue(ui->tableView->currentIndex().row());
+  int tableID = ui->tableView->currentIndex().siblingAtColumn(0).data().toInt();
+
+  proxyModel->setSourceModel(nullptr);
+
+  _switches->removeValue(tableID);
+
+  proxyModel->setSourceModel(_switches);
+
   ui->tableView->resizeColumnsToContents();
 }

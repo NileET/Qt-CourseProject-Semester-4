@@ -11,6 +11,7 @@ QT_END_NAMESPACE
 
 class QActionGroup;
 class TableModel;
+class ProxyModel;
 
 class MainWindow : public QMainWindow
 {
@@ -35,11 +36,13 @@ private slots:
 private:
   Ui::MainWindow *ui;
   TableModel *_switches;
+  ProxyModel *proxyModel;
 
   QTranslator appTranslator;
   QActionGroup *languageActionGroup;
   QString qmPath;
 
+  void createConnections();
   void createLanguageMenu();
 
   void openFile(const QString& fullFileName);

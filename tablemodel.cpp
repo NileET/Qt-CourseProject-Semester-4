@@ -1,19 +1,19 @@
 #include "tablemodel.hpp"
 
 TableModel::TableModel(QObject *parent) :
-  QAbstractTableModel(parent), columns(7)
+  QAbstractTableModel(parent), _columns(8)
 { }
 
 int TableModel::rowCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
-  return _switches.count();
+  return _switches.size();
 }
 
 int TableModel::columnCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
-  return columns;
+  return _columns;
 }
 
 QVariant TableModel::data(const QModelIndex &index, int role) const
@@ -21,27 +21,31 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
   if (!index.isValid())
     return QVariant();
 
+  const Switch& sw = _switches[index.row()];
+
   switch (role) {
     case Qt::DisplayRole:
     case Qt::EditRole:
       if (index.column() == 0)
-          return _switches.at(index.row()).getManufacturer().c_str();
+          return index.row();
       if (index.column() == 1)
-          return _switches.at(index.row()).getModelName().c_str();
-      if (index.column() == 2) {
-          auto speed = _switches.at(index.row()).getBaseSpeed();
+          return sw.getManufacturer().c_str();
+      if (index.column() == 2)
+          return sw.getModelName().c_str();
+      if (index.column() == 3) {
+          auto speed = sw.getBaseSpeed();
           return QString("%1, %2").arg(speed.first).arg(speed.second);
         }
-      if (index.column() == 3)
-          return QString::number(_switches.at(index.row()).getPortCount());
       if (index.column() == 4)
-          return _switches.at(index.row()).getHasPoE() ? tr("Yes") : tr("No");
-      if (index.column() == 5) {
-          auto size =_switches.at(index.row()).getModelSize();
+          return QString::number(sw.getPortCount());
+      if (index.column() == 5)
+          return sw.getHasPoE() ? tr("Yes") : tr("No");
+      if (index.column() == 6) {
+          auto size = sw.getModelSize();
           return QString("%1x%2x%3").arg(size.__width).arg(size.__length).arg(size.__high);
         }
-      if (index.column() == 6)
-          return QString::number(_switches.at(index.row()).getPrice()) + " ₽";
+      if (index.column() == 7)
+          return QString::number(sw.getPrice()) + " ₽";
       break;
     default:
       return QVariant();
@@ -56,28 +60,28 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     return false;
 
   if (role == Qt::EditRole) {
-      auto sw =_switches.at(index.row());
+      Switch& sw =_switches[index.siblingAtColumn(0).data().toInt()];
 
       switch (index.column()) {
-        case 0:
-          sw.setManufacturer(value.toString().toStdString()); break;
         case 1:
-          sw.setModelName(value.toString().toStdString()); break;
+          sw.setManufacturer(value.toString().toStdString()); break;
         case 2:
+          sw.setModelName(value.toString().toStdString()); break;
+        case 3:
           {
             auto speedList = value.toStringList();
             std::pair speed = std::make_pair(speedList[0].toInt(), speedList[1].toInt());
             sw.setBaseSpeed(speed); break;
           }
-        case 3:
-          sw.setPortCount(value.toInt()); break;
         case 4:
+          sw.setPortCount(value.toInt()); break;
+        case 5:
           {
             QString strPoE = value.toString();
             bool PoE = strPoE == tr("Yes") ? true : false;
             sw.setHasPoE(PoE); break;
           }
-        case 5:
+        case 6:
           {
             QStringList listSize = value.toString().split("x");
             double width  = listSize[0].toDouble(),
@@ -85,11 +89,10 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
                    high   = listSize[2].toDouble();
             sw.setModelSize({width, length, high});
           }
-        case 6:
+        case 7:
           sw.setPrice(value.toInt()); break;
         }
 
-      _switches.replace(index.row(), sw);
       return true;
     }
 
@@ -109,18 +112,20 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
   if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
       switch (section) {
         case 0:
-          return tr("Manufacturer");
+          return "ID";
         case 1:
-          return tr("Model");
+          return tr("Manufacturer");
         case 2:
-          return tr("Base baud rate");
+          return tr("Model");
         case 3:
-          return tr("Number of ports");
+          return tr("Base baud rate");
         case 4:
-          return tr("PoE support");
+          return tr("Number of ports");
         case 5:
-          return tr("Dimensions");
+          return tr("PoE support");
         case 6:
+          return tr("Dimensions");
+        case 7:
           return tr("Price");
         }
     }
@@ -133,15 +138,25 @@ void TableModel::clear()
   emit layoutChanged();
 }
 
-void TableModel::removeValue(int row)
+void TableModel::removeValue(const int &tableID)
 {
-  _switches.removeAt(row);
+  _switches.remove(tableID);
+
+  for (auto it = _switches.begin(); it != _switches.end(); ++it) {
+      int id = it.key();
+      if (id > tableID)
+        _switches[id - 1] = it.value();
+    }
+
+  int lastID = _switches.size() - 1;
+  _switches.remove(lastID);
+
   emit layoutChanged();
 }
 
 void TableModel::insertValue(const Switch &value)
 {
-  _switches << value;
+  _switches.insert(_switches.size(), value);
   emit layoutChanged();
 }
 

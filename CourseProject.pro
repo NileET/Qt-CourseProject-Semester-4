@@ -13,6 +13,7 @@ SOURCES += \
     device.cpp \
     main.cpp \
     mainwindow.cpp \
+    proxymodel.cpp \
     switch.cpp \
     tablemodel.cpp
 
@@ -20,6 +21,7 @@ HEADERS += \
     aboutprogramm.hpp \
     device.hpp \
     mainwindow.hpp \
+    proxymodel.hpp \
     switch.hpp \
     tablemodel.hpp
 

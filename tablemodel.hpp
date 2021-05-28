@@ -2,15 +2,15 @@
 #define TABLEMODEL_HPP
 
 #include <QAbstractTableModel>
-#include <QList>
+#include <QMap>
 #include "switch.hpp"
 
 class TableModel : public QAbstractTableModel
 {
   Q_OBJECT
 
-  QList<Switch> _switches;
-  int columns;
+  QMap<int, Switch> _switches;
+  int _columns;
 
 public:
   TableModel(QObject *parent = nullptr);
@@ -22,11 +22,14 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const;
   QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
+  // Удаление всех данных
   void clear();
-  void removeValue(int row);
+  // Удаление одной записи
+  void removeValue(const int &tableID);
+  // Добавление записи в конец
   void insertValue(const Switch &value);
 
-  QList<Switch> getList() const {return _switches;}
+  QMap<int, Switch> toQMap() const {return _switches;}
 
 };
 
