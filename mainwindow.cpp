@@ -19,7 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
   , ui(new Ui::MainWindow)
   , _switches(new TableModel(this))
   , proxyModel(new ProxyModel(this))
-  , menu(new QMenu(this))
+  , contextTableMenu(new QMenu(this))
+  , currentFileName(QString())
 {
   ui->setupUi(this);
 
@@ -30,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui->tableView->setSortingEnabled(true);
   // Сортировка по id
   ui->tableView->sortByColumn(0, Qt::AscendingOrder);
-  // Задаем необходимые делегаты для некоторых столбцов
+  // Задаем необходимые делегаты для нужных столбцов
   ui->tableView->setItemDelegateForColumn(4, new SpinBoxDelegate(4, this));
   ui->tableView->setItemDelegateForColumn(7, new SpinBoxDelegate(7, this));
   ui->tableView->setItemDelegateForColumn(5, new CheckBoxDelegate(this));
@@ -39,8 +40,8 @@ MainWindow::MainWindow(QWidget *parent)
   // Выравнивание колонок по содержимому таблицы
   ui->tableView->resizeColumnsToContents();
   // Добавляем события в контекстное меню таблицы
-  menu->addAction(ui->actionAdd);
-  menu->addAction(ui->actionRemove);
+  contextTableMenu->addAction(ui->actionAdd);
+  contextTableMenu->addAction(ui->actionRemove);
   // Установка переводчика
   qApp->installTranslator(&appTranslator);
   // Местоположение каталога с файлами перевода
@@ -57,20 +58,25 @@ void MainWindow::createConnections()
   connect(ui->actionAboutProgramm, &QAction::triggered,  this, &MainWindow::aboutProgramm);
   // Вызов контекстного меню
   connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
+  // Вызов фильтрации (поиска) по всей таблице при изменении текста
+  connect(ui->lineEditFind, &QLineEdit::textChanged, this, &MainWindow::labelFind_textChanged);
   // Вызов открытия файла
-  connect(ui->actionOpen  , &QAction::triggered, this, &MainWindow::actionOpen_triggered);
+  connect(ui->actionOpen  , &QAction::triggered,  this, &MainWindow::actionOpen_triggered);
   // Вызов сохранения файла
-  connect(ui->actionSave  , &QAction::triggered, this, &MainWindow::actionSave_triggered);
+  connect(ui->actionSave  , &QAction::triggered,  this, &MainWindow::actionSave_triggered);
+  // Вызов сохранения файла как...
+  connect(ui->actionSaveAs, &QAction::triggered,  this, &MainWindow::actionSaveAs_triggered);
   // Вызов закрытия файла
-  connect(ui->actionClose , &QAction::triggered, this, &MainWindow::actionClose_triggered);
+  connect(ui->actionClose , &QAction::triggered,  this, &MainWindow::actionClose_triggered);
   // Вызов добавления записи
-  connect(ui->actionAdd   , &QAction::triggered, this, &MainWindow::actionAdd_triggered);
+  connect(ui->actionAdd   , &QAction::triggered,  this, &MainWindow::actionAdd_triggered);
   // Вызов удаления записи
-  connect(ui->actionRemove, &QAction::triggered, this, &MainWindow::actionRemove_triggered);
+  connect(ui->actionRemove, &QAction::triggered,  this, &MainWindow::actionRemove_triggered);
 }
 
 MainWindow::~MainWindow()
 {
+  delete contextTableMenu;
   delete proxyModel;
   delete _switches;
   delete languageActionGroup;
@@ -128,16 +134,27 @@ void MainWindow::createLanguageMenu()
 void MainWindow::actionOpen_triggered()
 {
   if (_switches->rowCount(QModelIndex())) {
-
-      return;
+      if (QMessageBox::Yes == QMessageBox::question(this,
+                     tr("Save and close"),
+                     tr("Do you want to save and close "
+                        "%1 before opening of "
+                        "new file?").arg(QFileInfo(currentFileName).fileName()),
+                      QMessageBox::Yes |
+                      QMessageBox::Cancel)) {
+          actionSave_triggered();
+          actionClose_triggered();
+        } else {
+          return;
+        }
     }
 
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Document"));
+  currentFileName = QFileDialog::getOpenFileName(this, tr("Open Document"));
 
-  if (!fileName.isEmpty()) {
-      openFile(fileName);
+  if (!currentFileName.isEmpty()) {
+      openFile(currentFileName);
     }
 }
+
 
 void MainWindow::openFile(const QString& fullFileName)
 {
@@ -186,17 +203,24 @@ void MainWindow::openFile(const QString& fullFileName)
   ui->tableView->resizeColumnsToContents();
 
   ui->actionSave->setEnabled(true);
+  ui->actionSaveAs->setEnabled(true);
   ui->actionClose->setEnabled(true);
   ui->menuEntry->setEnabled(true);
+  ui->lineEditFind->setEnabled(true);
 }
 
 void MainWindow::actionSave_triggered()
 {
-  QString fileName = QFileDialog::getSaveFileName(this, tr("Save Document"),
+  saveFile(currentFileName);
+}
+
+void MainWindow::actionSaveAs_triggered()
+{
+  QString saveFileName = QFileDialog::getSaveFileName(this, tr("Save Document"),
                                                   QDir::currentPath(),
                                                   "Text Files (*.txt);;All Files (*.*)");
-  if (!fileName.isEmpty()) {
-      saveFile(fileName);
+  if (!saveFileName.isEmpty()) {
+      saveFile(saveFileName);
     }
 }
 
@@ -243,22 +267,26 @@ void MainWindow::aboutProgramm()
 void MainWindow::actionClose_triggered()
 {
   proxyModel->setSourceModel(nullptr);
+
   _switches->clear();
+  currentFileName = QString();
 
   ui->actionSave->setEnabled(false);
+  ui->actionSaveAs->setEnabled(false);
   ui->actionClose->setEnabled(false);
   ui->menuEntry->setEnabled(false);
+  ui->lineEditFind->setEnabled(false);
 }
 
 void MainWindow::customMenuRequested(QPoint pos)
 {
   // Вызываем контекстное меню для таблицы
-  menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
+  contextTableMenu->popup(ui->tableView->viewport()->mapToGlobal(pos));
 }
 
 void MainWindow::actionAdd_triggered()
 {
-  if (!_switches->rowCount(QModelIndex())) {
+  if (currentFileName.isEmpty()) {
       QMessageBox::warning(this,
                            tr("Error of appending"),
                            tr("Can not append entry. Probably, table is empty..."));
@@ -296,4 +324,17 @@ void MainWindow::actionRemove_triggered()
 
   ui->tableView->hideColumn(0);
   ui->tableView->resizeColumnsToContents();
+}
+
+void MainWindow::labelFind_textChanged(const QString& text)
+{
+  ui->tableView->setModel(proxyModel);
+
+  //Устанавливаем регулярное выражения для фильтра
+  QRegExp::PatternSyntax syntax = QRegExp::PatternSyntax(QRegExp::FixedString);
+  QRegExp regExp(text, Qt::CaseInsensitive, syntax);
+
+  //Устанавливаем все колонки фильтрации при поиске
+  proxyModel->setFilterKeyColumn(-1);
+  proxyModel->setFilterRegExp(regExp);
 }

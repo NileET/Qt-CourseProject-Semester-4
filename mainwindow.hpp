@@ -26,22 +26,25 @@ private slots:
 
   void actionOpen_triggered();
   void actionSave_triggered();
+  void actionSaveAs_triggered();
   void actionClose_triggered();
 
   void aboutProgramm();
   void customMenuRequested(QPoint pos);
   void actionAdd_triggered();
   void actionRemove_triggered();
+  void labelFind_textChanged(const QString& text);
 
 private:
   Ui::MainWindow *ui;
   TableModel *_switches;
   ProxyModel *proxyModel;
-  QMenu *menu;
+  QMenu *contextTableMenu;
 
   QTranslator appTranslator;
   QActionGroup *languageActionGroup;
   QString qmPath;
+  QString currentFileName;
 
   void createConnections();
   void createLanguageMenu();
