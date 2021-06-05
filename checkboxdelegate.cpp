@@ -48,8 +48,7 @@ void CheckBoxDelegate::updateEditorGeometry(QWidget *editor,
   // Для переноса checkbox в центр ячейки создаем объект
   // и изменяем его свойства
   QStyleOptionButton newEditorOption;
-  QRect rectIndicator =
-          QApplication::style()->subElementRect(QStyle::SE_CheckBoxIndicator,
+  QRect rectIndicator = QApplication::style()->subElementRect(QStyle::SE_CheckBoxIndicator,
                                                 &newEditorOption);
   newEditorOption.rect = option.rect;
   newEditorOption.rect.setLeft(option.rect.x() +
@@ -65,8 +64,7 @@ void CheckBoxDelegate::paint(QPainter *painter,
 {
     // Обрабатываем прорисовку элемента CheckBoxIndicator с центрированием
     QStyleOptionButton newEditorOption;
-    QRect rectIndicator =
-            QApplication::style()->subElementRect(QStyle::SE_CheckBoxIndicator,
+    QRect rectIndicator = QApplication::style()->subElementRect(QStyle::SE_CheckBoxIndicator,
                                                   &newEditorOption);
     newEditorOption.rect = option.rect;
     newEditorOption.rect.setLeft(option.rect.x() +

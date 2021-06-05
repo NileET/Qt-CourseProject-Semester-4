@@ -21,12 +21,13 @@ QWidget *SpinBoxDelegate::createEditor(QWidget *parent,
   // Убираем рамку
   editor->setFrame(false);
 
-  if (_column == 4)
+  if (_column == 3)
       // Устанавливаем min и max значения
       editor->setRange(0, 100);
-  else {
+  else if (_column == 6) {
       // Устанавливаем минимальное значение
       editor->setRange(0, 2'147'483'647);
+      editor->setSingleStep(100);
       // Устанавливаем суффикс
       editor->setSuffix(" ₽");
     }
@@ -37,17 +38,20 @@ QWidget *SpinBoxDelegate::createEditor(QWidget *parent,
 void SpinBoxDelegate::setEditorData(QWidget *editor,
                                     const QModelIndex &index) const
 {
-  // Извлекаем данные
   int value = 0;
-  if (_column == 7) {
+
+  // Извлекаем данные
+  if (_column == 3) {
+      value = index.model()->data(index, Qt::EditRole).toInt();
+    }
+  else if (_column == 6) {
       QString strValue = index.model()->data(index, Qt::EditRole).toString();
       strValue.chop(2);
       value = strValue.toInt();
     }
-  else
-      value = index.model()->data(index, Qt::EditRole).toInt();
 
-  QSpinBox *spinBox = qobject_cast<QSpinBox*>(editor);
+
+  QSpinBox *spinBox = qobject_cast<QSpinBox *>(editor);
 
   // Устанавливаем значение в spinbox
   spinBox->setValue(value);
@@ -56,7 +60,7 @@ void SpinBoxDelegate::setEditorData(QWidget *editor,
 void SpinBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                    const QModelIndex &index) const
 {
-  QSpinBox *spinBox = qobject_cast<QSpinBox*>(editor);
+  QSpinBox *spinBox = qobject_cast<QSpinBox *>(editor);
 
   // Если со времени последней интерпретации текст изменился, испускаются сигналы
   spinBox->interpretText();

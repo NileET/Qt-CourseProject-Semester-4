@@ -33,7 +33,7 @@ private slots:
   void customMenuRequested(QPoint pos);
   void actionAdd_triggered();
   void actionRemove_triggered();
-  void labelFind_textChanged(const QString& text);
+  void lineEditFind_textChanged(const QString& text);
 
 private:
   Ui::MainWindow *ui;

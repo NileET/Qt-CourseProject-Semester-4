@@ -10,11 +10,8 @@ bool ProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex &sou
   QString rightString = sourceModel()->data(source_right).toString();
 
   switch (source_left.column()) {
-    // Сортировка по id
-    case 0:
-      return leftString.toInt() < rightString.toInt();
     // Сортировка по скорости
-    case 3:
+    case 2:
       {
         QStringList leftList = leftString.split(", ");
         QStringList rightList = rightString.split(", ");
@@ -22,10 +19,10 @@ bool ProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex &sou
             std::make_tuple(rightList[0].toInt(), rightList[1].toInt());
       }
     // Сортировка по количеству портов
-    case 4:
+    case 3:
       return leftString.toInt() < rightString.toInt();
     // Сортировка по по размеру
-    case 6:
+    case 5:
       {
         QStringList leftList = leftString.split("x");
         QStringList rightList = rightString.split("x");
@@ -33,7 +30,7 @@ bool ProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex &sou
             std::make_tuple(rightList[0].toDouble(), rightList[1].toDouble(), rightList[2].toDouble());
       }
     // Сортировка по цене
-    case 7:
+    case 6:
       return leftString.split(" ")[0].toInt() < rightString.split(" ")[0].toInt();
     // Лекскикографическая сортировка для остальных столбцов
     default:

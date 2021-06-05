@@ -29,16 +29,21 @@ MainWindow::MainWindow(QWidget *parent)
   ui->tableView->setModel(proxyModel);
   // Включение сортировки
   ui->tableView->setSortingEnabled(true);
-  // Сортировка по id
+  // Сортировка по manufacturer
   ui->tableView->sortByColumn(0, Qt::AscendingOrder);
-  // Задаем необходимые делегаты для нужных столбцов
-  ui->tableView->setItemDelegateForColumn(4, new SpinBoxDelegate(4, this));
-  ui->tableView->setItemDelegateForColumn(7, new SpinBoxDelegate(7, this));
-  ui->tableView->setItemDelegateForColumn(5, new CheckBoxDelegate(this));
+  // Задаем делегаты для нужных столбцов
+  ui->tableView->setItemDelegateForColumn(3, new SpinBoxDelegate(3, this));
+  ui->tableView->setItemDelegateForColumn(6, new SpinBoxDelegate(6, this));
+  ui->tableView->setItemDelegateForColumn(4, new CheckBoxDelegate(this));
   // Растягивание последнего столбца
   ui->tableView->horizontalHeader()->setStretchLastSection(true);
+  // Построчное выделение
+  ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
   // Выравнивание колонок по содержимому таблицы
   ui->tableView->resizeColumnsToContents();
+
+  ui->tableView->setDragEnabled(true);
+  ui->tableView->setDropIndicatorShown(true);
   // Добавляем события в контекстное меню таблицы
   contextTableMenu->addAction(ui->actionAdd);
   contextTableMenu->addAction(ui->actionRemove);
@@ -59,7 +64,7 @@ void MainWindow::createConnections()
   // Вызов контекстного меню
   connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
   // Вызов фильтрации (поиска) по всей таблице при изменении текста
-  connect(ui->lineEditFind, &QLineEdit::textChanged, this, &MainWindow::labelFind_textChanged);
+  connect(ui->lineEditFind, &QLineEdit::textChanged, this, &MainWindow::lineEditFind_textChanged);
   // Вызов открытия файла
   connect(ui->actionOpen  , &QAction::triggered,  this, &MainWindow::actionOpen_triggered);
   // Вызов сохранения файла
@@ -199,7 +204,6 @@ void MainWindow::openFile(const QString& fullFileName)
   QApplication::restoreOverrideCursor();
 
   proxyModel->setSourceModel(_switches);
-  ui->tableView->hideColumn(0);
   ui->tableView->resizeColumnsToContents();
 
   ui->actionSave->setEnabled(true);
@@ -238,7 +242,7 @@ void MainWindow::saveFile(const QString &fullFileName)
   QTextStream out(&file);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  foreach (const auto& it, _switches->toQMap()) {
+  foreach (const auto& it, _switches->toQList()) {
       out << it.getManufacturer().c_str() << ';'
           << it.getModelName().c_str()    << ';'
           << it.getBaseSpeed().first      << ' '
@@ -293,15 +297,18 @@ void MainWindow::actionAdd_triggered()
       return;
     }
 
-  proxyModel->setSourceModel(nullptr);
-
   // Добавление записи
-  _switches->insertValue(Switch());
+  _switches->insertRows(0, 1);
 
-  proxyModel->setSourceModel(_switches);
-
-  ui->tableView->hideColumn(0);
   ui->tableView->resizeColumnsToContents();
+
+  for (int row = _switches->rowCount(); row >= 0 ; --row) {
+       QModelIndex indexItem = proxyModel->index(row, 1);
+       if (indexItem.data().toString() == "Unknown") {
+           ui->tableView->selectRow(indexItem.row());
+           break;
+         }
+    }
 }
 
 void MainWindow::actionRemove_triggered()
@@ -313,20 +320,14 @@ void MainWindow::actionRemove_triggered()
       return;
     }
 
-  int tableID = ui->tableView->currentIndex().siblingAtColumn(0).data().toInt();
+  // Удаление выделенной строки
+  int row = proxyModel->mapToSource(ui->tableView->currentIndex()).row();
+  _switches->removeRows(row, 1);
 
-  proxyModel->setSourceModel(nullptr);
-
-  // Удаление записи
-  _switches->removeValue(tableID);
-
-  proxyModel->setSourceModel(_switches);
-
-  ui->tableView->hideColumn(0);
-  ui->tableView->resizeColumnsToContents();
+  //ui->tableView->resizeColumnsToContents();
 }
 
-void MainWindow::labelFind_textChanged(const QString& text)
+void MainWindow::lineEditFind_textChanged(const QString& text)
 {
   ui->tableView->setModel(proxyModel);
 
