@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QString>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
@@ -21,7 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
   , currentFileName(QString())
 {
   ui->setupUi(this);
-
+  // Читаем сохраненные парамеры окна
+  readSettings();
   // Задаем название главного окна
   setWindowTitle(tr("Switch"));
   // Задаеммодель для tableView
@@ -65,6 +67,9 @@ void MainWindow::createConnections()
 
 MainWindow::~MainWindow()
 {
+  // Сохраняем параметры окна
+  writeSettings();
+
   delete contextTableMenu;
   delete proxyModel;
   delete _switches;
@@ -113,10 +118,18 @@ void MainWindow::createLanguageMenu()
       ui->menuLanguage->addAction(action);
       // Добавляем i-ый пункт в единую группу пунктов
       languageActionGroup->addAction(action);
-      // Задаём  английский язык в качестве выбранного по умолчанию
-      if (language == "English") {
+      // Задаём язык выбранный в прошлой сессии
+      if (currentLanguage == locale) {
           action->setChecked(true);
+          switchLanguage(action);
         }
+      // Устанавливаем иконки к языкам
+      if (language == "English")
+        action->setIcon(QIcon(":/img/images/flagBritain.png"));
+      else if (language == "Русский")
+        action->setIcon(QIcon(":/img/images/flagRussia.png"));
+      else
+        action->setIcon(QIcon(":/img/images/flagGermany.png"));
     }
 }
 
@@ -324,4 +337,22 @@ void MainWindow::lineEditFind_textChanged(const QString& text)
   //Устанавливаем все колонки фильтрации при поиске
   proxyModel->setFilterKeyColumn(-1);
   proxyModel->setFilterRegExp(regExp);
+}
+
+void MainWindow::readSettings()
+{
+  QSettings settings("MySoft", "CourseProject");
+
+  currentLanguage = settings.value("checkedLanguage", "CourseProject_en_US.qm").toString();
+  restoreGeometry(settings.value("geometryMainWindow").toByteArray());
+}
+
+void MainWindow::writeSettings()
+{
+  QSettings settings("MySoft", "CourseProject");
+
+  QString checkedLanguage = languageActionGroup->checkedAction()->data().toString();
+
+  settings.setValue("checkedLanguage", checkedLanguage);
+  settings.setValue("geometryMainWindow", saveGeometry());
 }

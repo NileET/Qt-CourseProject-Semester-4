@@ -9,5 +9,8 @@
         <file>images/addData.png</file>
         <file>images/removeData.png</file>
         <file>images/aboutProgramm.png</file>
+        <file>images/flagBritain.png</file>
+        <file>images/flagGermany.png</file>
+        <file>images/flagRussia.png</file>
     </qresource>
 </RCC>

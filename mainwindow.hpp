@@ -2,7 +2,6 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
-#include <QList>
 #include <QTranslator>
 
 QT_BEGIN_NAMESPACE
@@ -45,12 +44,15 @@ private:
   QActionGroup *languageActionGroup;
   QString qmPath;
   QString currentFileName;
-  QPoint startPosition;
+  QString currentLanguage;
 
   void createConnections();
   void createLanguageMenu();
 
   void openFile(const QString& fullFileName);
   void saveFile(const QString& fullFileName);
+
+  void readSettings();
+  void writeSettings();
 };
 #endif // MAINWINDOW_HPP
