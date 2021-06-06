@@ -3,8 +3,6 @@
 #include "aboutprogramm.hpp"
 #include "tablemodel.hpp"
 #include "proxymodel.hpp"
-#include "spinboxdelegate.hpp"
-#include "checkboxdelegate.hpp"
 
 #include <QFileDialog>
 #include <QFile>
@@ -24,27 +22,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
   ui->setupUi(this);
 
-  this->setWindowTitle(tr("Switch"));
-
+  // Задаем название главного окна
+  setWindowTitle(tr("Switch"));
+  // Задаеммодель для tableView
   ui->tableView->setModel(proxyModel);
-  // Включение сортировки
-  ui->tableView->setSortingEnabled(true);
   // Сортировка по manufacturer
   ui->tableView->sortByColumn(0, Qt::AscendingOrder);
-  // Задаем делегаты для нужных столбцов
-  ui->tableView->setItemDelegateForColumn(3, new SpinBoxDelegate(3, this));
-  ui->tableView->setItemDelegateForColumn(6, new SpinBoxDelegate(6, this));
-  ui->tableView->setItemDelegateForColumn(4, new CheckBoxDelegate(this));
-  // Растягивание последнего столбца
-  ui->tableView->horizontalHeader()->setStretchLastSection(true);
-  // Построчное выделение
-  ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-  // Выравнивание колонок по содержимому таблицы
-  ui->tableView->resizeColumnsToContents();
-
-  ui->tableView->setDragEnabled(true);
-  ui->tableView->setDropIndicatorShown(true);
-  // Добавляем события в контекстное меню таблицы
+  // Добавляем действия в контекстное меню таблицы
   contextTableMenu->addAction(ui->actionAdd);
   contextTableMenu->addAction(ui->actionRemove);
   // Установка переводчика
@@ -201,10 +185,16 @@ void MainWindow::openFile(const QString& fullFileName)
       _switches->insertValue(Switch(manufacturer, modelName, baseSpeed, portCount, hasPoE, {width, length, high}, price));
     }
 
+  file.close();
+
   QApplication::restoreOverrideCursor();
 
+  // Задаем модель для proxyModel
   proxyModel->setSourceModel(_switches);
+  // Выравнивание колонок по содержимому таблицы
   ui->tableView->resizeColumnsToContents();
+  // Растягивание последнего столбца
+  ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
   ui->actionSave->setEnabled(true);
   ui->actionSaveAs->setEnabled(true);
@@ -255,6 +245,8 @@ void MainWindow::saveFile(const QString &fullFileName)
           << it.getPrice()                << ';' << '\n';
     }
 
+  file.close();
+
   QApplication::restoreOverrideCursor();
 }
 
@@ -300,8 +292,6 @@ void MainWindow::actionAdd_triggered()
   // Добавление записи
   _switches->insertRows(0, 1);
 
-  ui->tableView->resizeColumnsToContents();
-
   for (int row = _switches->rowCount(); row >= 0 ; --row) {
        QModelIndex indexItem = proxyModel->index(row, 1);
        if (indexItem.data().toString() == "Unknown") {
@@ -323,14 +313,10 @@ void MainWindow::actionRemove_triggered()
   // Удаление выделенной строки
   int row = proxyModel->mapToSource(ui->tableView->currentIndex()).row();
   _switches->removeRows(row, 1);
-
-  //ui->tableView->resizeColumnsToContents();
 }
 
 void MainWindow::lineEditFind_textChanged(const QString& text)
 {
-  ui->tableView->setModel(proxyModel);
-
   //Устанавливаем регулярное выражения для фильтра
   QRegExp::PatternSyntax syntax = QRegExp::PatternSyntax(QRegExp::FixedString);
   QRegExp regExp(text, Qt::CaseInsensitive, syntax);

@@ -45,6 +45,7 @@ private:
   QActionGroup *languageActionGroup;
   QString qmPath;
   QString currentFileName;
+  QPoint startPosition;
 
   void createConnections();
   void createLanguageMenu();

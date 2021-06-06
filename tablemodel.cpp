@@ -1,5 +1,8 @@
 #include "tablemodel.hpp"
 
+#include <QMimeData>
+#include <QDataStream>
+
 TableModel::TableModel(QObject *parent) :
   QAbstractTableModel(parent)
 { }
@@ -59,7 +62,7 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
 bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
   if (index.isValid() && role == Qt::EditRole) {
-      Switch& sw =_switches[index.row()];
+      Switch& sw = _switches[index.row()];
 
       switch (index.column()) {
         case 0:
@@ -104,8 +107,9 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
 Qt::ItemFlags TableModel::flags(const QModelIndex &index) const
 {
   if (index.isValid())
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-  return Qt::NoItemFlags;
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable
+                             | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+  return Qt::NoItemFlags | Qt::ItemIsDropEnabled;
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -157,6 +161,7 @@ bool TableModel::removeRows(int row, int count, const QModelIndex &parent)
   return true;
 }
 
+
 void TableModel::clear()
 {
   _switches.clear();
@@ -168,5 +173,3 @@ void TableModel::insertValue(const Switch &value)
   _switches << value;
   emit layoutChanged();
 }
-
-

@@ -17,7 +17,8 @@ SOURCES += \
     proxymodel.cpp \
     spinboxdelegate.cpp \
     switch.cpp \
-    tablemodel.cpp
+    tablemodel.cpp \
+    tableview.cpp
 
 HEADERS += \
     aboutprogramm.hpp \
@@ -27,7 +28,8 @@ HEADERS += \
     proxymodel.hpp \
     spinboxdelegate.hpp \
     switch.hpp \
-    tablemodel.hpp
+    tablemodel.hpp \
+    tableview.hpp
 
 FORMS += \
     aboutprogramm.ui \
