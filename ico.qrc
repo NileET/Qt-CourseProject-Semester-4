@@ -1,16 +1,16 @@
 <RCC>
     <qresource prefix="/img">
         <file>images/iconMainWindow.jpg</file>
-        <file>images/exit.png</file>
-        <file>images/open.jpg</file>
-        <file>images/save.jpg</file>
-        <file>images/close.png</file>
-        <file>images/save_as.png</file>
-        <file>images/addData.png</file>
-        <file>images/removeData.png</file>
-        <file>images/aboutProgramm.png</file>
         <file>images/flagBritain.png</file>
         <file>images/flagGermany.png</file>
         <file>images/flagRussia.png</file>
+        <file>images/about.png</file>
+        <file>images/add.png</file>
+        <file>images/close.png</file>
+        <file>images/exit.png</file>
+        <file>images/open.png</file>
+        <file>images/save.png</file>
+        <file>images/saveAs.png</file>
+        <file>images/remove.png</file>
     </qresource>
 </RCC>

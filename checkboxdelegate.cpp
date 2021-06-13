@@ -75,12 +75,12 @@ void CheckBoxDelegate::paint(QPainter *painter,
     if (index.data().toBool())
         // Если это возможно и значение является истинным (true),
         // то рисуем флажок, через побитовое "ИЛИ" с присвоением
-        newEditorOption.state |= QStyle::State_On;
+        newEditorOption.state |= QStyle::State_On | QStyle::State_Enabled;
 
     else
         // Если это возможно, но значение является ложным (false),
         // то стираем флажок QCheckBox
-        newEditorOption.state |= QStyle::State_Off;
+        newEditorOption.state |= QStyle::State_Off | QStyle::State_Enabled;
 
 
     // Для сохранения возможности выделения ячейки без её редактирования

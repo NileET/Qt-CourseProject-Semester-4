@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QTextStream>
 
+
 TableView::TableView(QWidget *parent) :
   QTableView(parent)
 {
@@ -37,6 +38,7 @@ void TableView::mouseMoveEvent(QMouseEvent *event)
       int distance = (event->pos() - startPosition).manhattanLength();
       if (distance >= QApplication::startDragDistance()) {
           QModelIndex index = currentIndex();
+
           QString manufacturer = index.siblingAtColumn(0).data().toString();
           QString modelName    = index.siblingAtColumn(1).data().toString();
           QString baseSpeed    = index.siblingAtColumn(2).data().toString();
@@ -49,21 +51,22 @@ void TableView::mouseMoveEvent(QMouseEvent *event)
 
           QFile eXport(QDir::tempPath() + "/" + manufacturer + ' ' + modelName + ".txt");
 
-          if (eXport.open(QFile::WriteOnly | QFile::Text)) {
-              QTextStream out(&eXport);
+          if (!eXport.open(QFile::ReadWrite | QFile::Text))
+            return;
 
-              out << " Device's manufacturer: " << manufacturer << '\n'
-                  << " Device's model: "        << modelName    << '\n'
-                  << " Base baud rate: "        << baseSpeed    << " (Mbps)\n"
-                  << " Number of ports: "       << portCount    << '\n'
-                  << " PoE support: "           << hasPoE       << '\n'
-                  << " Dimensions: "            << size         << " (mm)\n"
-                  << " Price: "                 << price        << " rubles\n";
+          QTextStream out(&eXport);
 
-            }
+          out << " Device's manufacturer: " << manufacturer << '\n'
+              << " Device's model: "        << modelName    << '\n'
+              << " Base baud rate: "        << baseSpeed    << " (Mbps)\n"
+              << " Number of ports: "       << portCount    << '\n'
+              << " PoE support: "           << hasPoE       << '\n'
+              << " Dimensions: "            << size         << " (mm)\n"
+              << " Price: "                 << price        << " rubles\n";
 
           QMimeData* mimeData = new QMimeData;
           mimeData->setUrls(QList<QUrl>() << QUrl::fromLocalFile(eXport.fileName()));
+          mimeData->setText(eXport.readAll());
 
           eXport.close();
 

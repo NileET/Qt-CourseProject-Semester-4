@@ -125,7 +125,7 @@
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="ico.qrc">
-     <normaloff>:/img/images/open.jpg</normaloff>:/img/images/open.jpg</iconset>
+     <normaloff>:/img/images/open.png</normaloff>:/img/images/open.png</iconset>
    </property>
    <property name="text">
     <string>Open</string>
@@ -137,7 +137,7 @@
    </property>
    <property name="icon">
     <iconset resource="ico.qrc">
-     <normaloff>:/img/images/save.jpg</normaloff>:/img/images/save.jpg</iconset>
+     <normaloff>:/img/images/save.png</normaloff>:/img/images/save.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -146,7 +146,7 @@
   <action name="actionAdd">
    <property name="icon">
     <iconset resource="ico.qrc">
-     <normaloff>:/img/images/addData.png</normaloff>:/img/images/addData.png</iconset>
+     <normaloff>:/img/images/add.png</normaloff>:/img/images/add.png</iconset>
    </property>
    <property name="text">
     <string>Add</string>
@@ -155,7 +155,7 @@
   <action name="actionRemove">
    <property name="icon">
     <iconset resource="ico.qrc">
-     <normaloff>:/img/images/removeData.png</normaloff>:/img/images/removeData.png</iconset>
+     <normaloff>:/img/images/remove.png</normaloff>:/img/images/remove.png</iconset>
    </property>
    <property name="text">
     <string>Remove</string>
@@ -176,7 +176,7 @@
   <action name="actionAboutProgramm">
    <property name="icon">
     <iconset resource="ico.qrc">
-     <normaloff>:/img/images/aboutProgramm.png</normaloff>:/img/images/aboutProgramm.png</iconset>
+     <normaloff>:/img/images/about.png</normaloff>:/img/images/about.png</iconset>
    </property>
    <property name="text">
     <string>About programm</string>
@@ -188,13 +188,13 @@
    </property>
    <property name="icon">
     <iconset resource="ico.qrc">
-     <normaloff>:/img/images/save_as.png</normaloff>:/img/images/save_as.png</iconset>
+     <normaloff>:/img/images/saveAs.png</normaloff>:/img/images/saveAs.png</iconset>
    </property>
    <property name="text">
-    <string>Save as...</string>
+    <string>Save as ...</string>
    </property>
    <property name="iconText">
-    <string>Save as...</string>
+    <string>Save as ...</string>
    </property>
   </action>
  </widget>
