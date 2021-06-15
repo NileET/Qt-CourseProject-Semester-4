@@ -51,6 +51,7 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
           }
         if (index.column() == 6)
             return QString::number(sw.getPrice()) + " ₽";
+        break;
       }
     default:
       return QVariant();
@@ -71,11 +72,18 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
             sw.setModelName(value.toString().toStdString()); break;
         case 2:
           {
+            QRegExp rx1("^(\\d{1,5}\\,|\\d{1,5}\\ \\,|\\d{1,5}\\,\\ )\\d{1,5}$");
+            QRegExp rx2("^\\d{1,5}\\ \\d{1,5}$");
+
+            QString val = value.toString();
             QStringList speedList;
-            if (value.toString().contains(','))
-              speedList = value.toString().split(",");
+            if (rx1.indexIn(val) != -1)
+              speedList = val.split(",");
+            else if (rx2.indexIn(val) != -1)
+              speedList = val.split(" ");
             else
-              speedList = value.toStringList();
+              return false;
+
             std::pair speed = std::make_pair(speedList[0].toInt(), speedList[1].toInt());
             sw.setBaseSpeed(speed); break;
           }
@@ -85,11 +93,24 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
             sw.setHasPoE(value.toBool()); break;
         case 5:
           {
-            QStringList listSize = value.toString().split("x");
-            double width  = listSize[0].toDouble(),
-                   length = listSize[1].toDouble(),
-                   high   = listSize[2].toDouble();
-            sw.setModelSize({width, length, high}); break;
+            QRegExp rx1("^(\\d{1,4}x){2}\\d{1,4}$");
+            QRegExp rx2("^(\\d{1,4}\\ ){2}\\d{1,4}$");
+
+            QString val = value.toString();
+            QStringList sizeList;
+            if (rx1.indexIn(val) != -1)
+                sizeList = val.split("x");
+            else if (rx2.indexIn(val) != -1)
+                sizeList = val.split(" ");
+            else
+              return false;
+
+            double width  = sizeList[0].toDouble(),
+                   length = sizeList[1].toDouble(),
+                   high   = sizeList[2].toDouble();
+
+            sw.setModelSize({width, length, high});
+            break;
           }
         case 6:
             sw.setPrice(value.toInt()); break;
@@ -140,7 +161,7 @@ bool TableModel::insertRows(int row, int count, const QModelIndex &parent)
   Q_UNUSED(parent);
   beginInsertRows(QModelIndex(), row, row + count - 1);
 
-  for (int row = 0; row < count; ++row) {
+  for (int i = 0; i < count; ++i) {
       _switches.insert(row, Switch());
     }
 
