@@ -16,8 +16,8 @@ TableView::TableView(QWidget *parent) :
   // Включение сортировки
   setSortingEnabled(true);
   // Задаем делегаты для нужных столбцов
-  setItemDelegateForColumn(3, new SpinBoxDelegate(3, this));
-  setItemDelegateForColumn(6, new SpinBoxDelegate(6, this));
+  setItemDelegateForColumn(3, new SpinBoxDelegate(this));
+  setItemDelegateForColumn(6, new SpinBoxDelegate(this));
   setItemDelegateForColumn(4, new CheckBoxDelegate(this));
   // Построчное выделение
   setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -35,7 +35,7 @@ void TableView::mouseMoveEvent(QMouseEvent *event)
     return;
 
   if (event->buttons() & Qt::LeftButton) {
-      int distance = (event->pos() - startPosition).manhattanLength();
+      int distance = event->pos().manhattanLength();
       if (distance >= QApplication::startDragDistance()) {
           QModelIndex index = currentIndex();
 

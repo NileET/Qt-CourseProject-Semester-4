@@ -13,6 +13,7 @@
 #include <QString>
 #include <QSettings>
 
+
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
@@ -24,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
   // Читаем сохраненные парамеры окна
   readSettings();
-  // Задаем название главного окна
-  setWindowTitle(tr("Switch"));
+  // Задаем иконку главному окну
+  setWindowIcon(QIcon(":/img/images/iconMainWindow.jpg"));
   // Задаеммодель для tableView
   ui->tableView->setModel(proxyModel);
   // Сортировка по manufacturer
@@ -195,7 +196,13 @@ void MainWindow::openFile(const QString& fullFileName)
 
       int price = list[6].toInt();
 
-      _switches->insertValue(Switch(manufacturer, modelName, baseSpeed, portCount, hasPoE, {width, length, high}, price));
+      _switches->insertValue(Switch(manufacturer,
+                                    modelName,
+                                    baseSpeed,
+                                    portCount,
+                                    hasPoE,
+                                    Switch::Size{width, length, high},
+                                    price));
     }
 
   file.close();

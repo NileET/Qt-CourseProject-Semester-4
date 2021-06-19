@@ -3,6 +3,7 @@
 #include <QMimeData>
 #include <QDataStream>
 
+
 TableModel::TableModel(QObject *parent) :
   QAbstractTableModel(parent)
 { }
@@ -109,7 +110,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
                    length = sizeList[1].toDouble(),
                    high   = sizeList[2].toDouble();
 
-            sw.setModelSize({width, length, high});
+            sw.setModelSize(Switch::Size{width, length, high});
             break;
           }
         case 6:

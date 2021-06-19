@@ -3,17 +3,22 @@
 
 #include <QTableView>
 
+
 class TableView : public QTableView
 {
   Q_OBJECT
 public:
-  TableView(QWidget *parent = nullptr);
+  /**
+   * @brief TableView - конструктор класса
+   */
+  explicit TableView(QWidget *parent = nullptr);
 
 protected:
-  void mouseMoveEvent(QMouseEvent *event);
-
-private:
-  QPoint startPosition;
+  /**
+   * @brief mouseMoveEvent - позволяет выполнить drag&drop при зажатии ЛКМ и движении мыши
+   * @param event - принимаемое действие
+   */
+  void mouseMoveEvent(QMouseEvent *event) override;
 };
 
 #endif // TABLEVIEW_HPP

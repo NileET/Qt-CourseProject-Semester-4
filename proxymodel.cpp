@@ -1,5 +1,6 @@
 #include "proxymodel.hpp"
 
+
 ProxyModel::ProxyModel(QObject *parent) :
   QSortFilterProxyModel(parent)
 { }

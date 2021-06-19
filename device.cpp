@@ -1,6 +1,7 @@
 #include "device.hpp"
 #include <iostream>
 
+
 Device::Device() : Device("Unknown",
                           "Unknown",
                           0,

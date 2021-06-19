@@ -4,8 +4,9 @@
 #include <QApplication>
 #include <QAbstractItemView>
 
-SpinBoxDelegate::SpinBoxDelegate(int column, QWidget *parent) :
-  QStyledItemDelegate(parent), _column(column)
+
+SpinBoxDelegate::SpinBoxDelegate(QWidget *parent) :
+  QStyledItemDelegate(parent)
 { }
 
 QWidget *SpinBoxDelegate::createEditor(QWidget *parent,
@@ -21,10 +22,10 @@ QWidget *SpinBoxDelegate::createEditor(QWidget *parent,
   // Убираем рамку
   editor->setFrame(false);
 
-  if (_column == 3)
+  if (index.column() == 3)
       // Устанавливаем min и max значения
       editor->setRange(0, 100);
-  else if (_column == 6) {
+  else if (index.column() == 6) {
       // Устанавливаем минимальное значение
       editor->setRange(0, 2'147'483'647);
       editor->setSingleStep(100);
@@ -41,10 +42,10 @@ void SpinBoxDelegate::setEditorData(QWidget *editor,
   int value = 0;
 
   // Извлекаем данные
-  if (_column == 3) {
+  if (index.column() == 3) {
       value = index.model()->data(index, Qt::EditRole).toInt();
     }
-  else if (_column == 6) {
+  else if (index.column() == 6) {
       QString strValue = index.model()->data(index, Qt::EditRole).toString();
       strValue.chop(2);
       value = strValue.toInt();

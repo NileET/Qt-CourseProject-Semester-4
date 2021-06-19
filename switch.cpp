@@ -1,6 +1,7 @@
 #include "switch.hpp"
 #include <iostream>
 
+
 Switch::Switch() :
       Device()
     , _baseSpeed(std::make_pair(0, 0))

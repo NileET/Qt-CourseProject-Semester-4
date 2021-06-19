@@ -1,6 +1,7 @@
 #include "aboutprogramm.hpp"
 #include "ui_aboutprogramm.h"
 
+
 AboutProgramm::AboutProgramm(QWidget *parent) :
   QDialog(parent),
   ui(new Ui::AboutProgramm)

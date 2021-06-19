@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QPainter>
 
+
 CheckBoxDelegate::CheckBoxDelegate(QWidget *parent) :
   QStyledItemDelegate(parent)
 { }
