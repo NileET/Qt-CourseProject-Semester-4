@@ -15,6 +15,12 @@ class TableModel : public QAbstractTableModel
    */
   QList<Switch> _switches;
 
+signals:
+  /**
+   * @brief wasModified - сигнал об изменении данных в таблице
+   */
+  void wasModified();
+
 public:
   /**
    * @brief TableModel - конструктор класса

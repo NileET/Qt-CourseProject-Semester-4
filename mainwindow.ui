@@ -17,10 +17,10 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Switch</string>
+   <string/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <widget class="TableView" name="tableView">
       <property name="contextMenuPolicy">
@@ -29,24 +29,69 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="labelFind">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Search and Filter</string>
         </property>
-        <property name="text">
-         <string>Find</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEditFind">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QComboBox" name="comboBoxHeaders">
+             <item>
+              <property name="text">
+               <string>All</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Manufacturer</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Model</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Base baud rate</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Number of ports</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>PoE support</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Dimensions</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Price</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditFind">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -66,6 +111,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
@@ -95,10 +141,22 @@
     </property>
     <addaction name="actionAboutProgramm"/>
    </widget>
+   <widget class="QMenu" name="menuGraphics">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>Graphics</string>
+    </property>
+    <addaction name="actionPrice"/>
+    <addaction name="actionPortCount"/>
+    <addaction name="actionVolume"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEntry"/>
-   <addaction name="menuLanguage"/>
+   <addaction name="menuGraphics"/>
    <addaction name="menuReference"/>
+   <addaction name="menuLanguage"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -111,6 +169,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNew"/>
    <addaction name="actionOpen"/>
    <addaction name="separator"/>
    <addaction name="actionSave"/>
@@ -202,6 +261,45 @@
     <string>Save as ...</string>
    </property>
   </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="ico.qrc">
+     <normaloff>:/img/images/new.png</normaloff>:/img/images/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionPrice">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ico.qrc">
+     <normaloff>:/img/images/chart.png</normaloff>:/img/images/chart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Price</string>
+   </property>
+  </action>
+  <action name="actionPortCount">
+   <property name="icon">
+    <iconset resource="ico.qrc">
+     <normaloff>:/img/images/chart.png</normaloff>:/img/images/chart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Port Count</string>
+   </property>
+  </action>
+  <action name="actionVolume">
+   <property name="icon">
+    <iconset resource="ico.qrc">
+     <normaloff>:/img/images/chart.png</normaloff>:/img/images/chart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Volume</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -213,22 +311,5 @@
  <resources>
   <include location="ico.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>actionExit</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

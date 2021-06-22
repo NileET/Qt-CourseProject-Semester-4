@@ -12,6 +12,7 @@ QT_END_NAMESPACE
 class QActionGroup;
 class TableModel;
 class ProxyModel;
+class Graphics;
 
 class MainWindow : public QMainWindow
 {
@@ -30,6 +31,16 @@ private slots:
    * @param action
    */
   void switchLanguage(QAction *action);
+
+  /**
+   * @brief setModified - сделать окно модифицированным
+   */
+  void setModified();
+
+  /**
+   * @brief actionNew_triggered - открытие нового окна MainWindow
+   */
+  void actionNew_triggered();
 
   /**
    * @brief actionOpen_triggered - триггер открытия файла
@@ -78,6 +89,21 @@ private slots:
    */
   void lineEditFind_textChanged(const QString& text);
 
+  /**
+   * @brief actionPrice_triggered - открытие графика цен
+   */
+  void actionPrice_triggered();
+
+  /**
+   * @brief actionPortCount_triggered - открытие графика количества портов
+   */
+  void actionPortCount_triggered();
+
+  /**
+   * @brief actionVolume_triggered - открытие графика
+   */
+  void actionVolume_triggered();
+
 private:
   /**
    * @brief ui - указатель на поля, созданные в Qt Designer
@@ -98,7 +124,6 @@ private:
    * @brief contextTableMenu - указатель на контекстное меню
    */
   QMenu *contextTableMenu;
-
 
   /**
    * @brief appTranslator - переводчик приложения
@@ -126,6 +151,11 @@ private:
   QString currentLanguage;
 
   /**
+   * @brief isUntitled - проверка имени файла на подлиность
+   */
+  bool isUntitled;
+
+  /**
    * @brief createConnections - создание всех connect'ов
    */
   void createConnections();
@@ -148,6 +178,12 @@ private:
   void saveFile(const QString& fullFileName);
 
   /**
+   * @brief setCurrentFile - задание имени текущего файла
+   * @param fullFileName - имя сохраняемого файла
+   */
+  void setCurrentFile(const QString& fullFileName);
+
+  /**
    * @brief readSettings - чтение настроек интерфейса с прошлой сессии
    */
   void readSettings();
@@ -156,5 +192,20 @@ private:
    * @brief writeSettings - сохранение настроек интерфейса текущей сессии
    */
   void writeSettings();
+
+
+  Graphics* createChart();
+
+protected:
+  /**
+   * @brief Событие наведения файла на программу
+   * @param event Объект класса события QDragEnterEvent
+   */
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  /**
+   * @brief Событие на отпускание файла в программу
+   * @param event Объект класса события QDropEvent
+   */
+  void dropEvent(QDropEvent* event) override;
 };
 #endif // MAINWINDOW_HPP

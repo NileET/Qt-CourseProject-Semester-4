@@ -1,8 +1,5 @@
 #include "tablemodel.hpp"
 
-#include <QMimeData>
-#include <QDataStream>
-
 
 TableModel::TableModel(QObject *parent) :
   QAbstractTableModel(parent)
@@ -120,6 +117,8 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
         }
 
       emit dataChanged(index, index);
+      emit wasModified();
+
       return true;
     }
 
@@ -167,6 +166,7 @@ bool TableModel::insertRows(int row, int count, const QModelIndex &parent)
     }
 
   endInsertRows();
+
   return true;
 }
 
@@ -180,6 +180,7 @@ bool TableModel::removeRows(int row, int count, const QModelIndex &parent)
   }
 
   endRemoveRows();
+
   return true;
 }
 

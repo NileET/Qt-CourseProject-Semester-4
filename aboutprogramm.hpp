@@ -21,7 +21,7 @@ public:
 
 private:
   /**
-   * @brief ui
+   * @brief ui - указатель на поля, созданные в Qt Designer
    */
   Ui::AboutProgramm *ui;
 };

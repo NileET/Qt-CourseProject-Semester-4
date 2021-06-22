@@ -3,15 +3,18 @@
 #include "aboutprogramm.hpp"
 #include "tablemodel.hpp"
 #include "proxymodel.hpp"
+#include "graphics.hpp"
 
-#include <QFileDialog>
-#include <QFile>
-#include <QLibraryInfo>
-#include <QActionGroup>
-#include <QMessageBox>
-#include <QTextStream>
 #include <QString>
+#include <QFile>
+#include <QFileDialog>
+#include <QLibraryInfo>
+#include <QTextStream>
 #include <QSettings>
+#include <QMessageBox>
+#include <QActionGroup>
+#include <QDragEnterEvent>
+#include <QMimeData>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -20,11 +23,13 @@ MainWindow::MainWindow(QWidget *parent)
   , _switches(new TableModel(this))
   , proxyModel(new ProxyModel(this))
   , contextTableMenu(new QMenu(this))
-  , currentFileName(QString())
+  , isUntitled(true)
 {
   ui->setupUi(this);
   // Читаем сохраненные парамеры окна
   readSettings();
+  // Ставим разрешение на принятие drop'ов
+  setAcceptDrops(true);
   // Задаем иконку главному окну
   setWindowIcon(QIcon(":/img/images/iconMainWindow.jpg"));
   // Задаеммодель для tableView
@@ -42,16 +47,27 @@ MainWindow::MainWindow(QWidget *parent)
   createConnections();
   // Создание языкового меню
   createLanguageMenu();
+  // Создание уникального номера
+  static int numberFile = 0;
+  // Задание имени текущего файла
+  currentFileName = QString("untitled_%1.txt").arg(numberFile++);
+  // адание названия главному окну
+  setWindowTitle(tr("%1[*] - %2")
+                 .arg(currentFileName, tr("Switch")));
 }
 
 void MainWindow::createConnections()
 {
-  // Вызов "О программе"
-  connect(ui->actionAboutProgramm, &QAction::triggered,  this, &MainWindow::aboutProgramm);
   // Вызов контекстного меню
   connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
   // Вызов фильтрации (поиска) по всей таблице при изменении текста
   connect(ui->lineEditFind, &QLineEdit::textChanged, this, &MainWindow::lineEditFind_textChanged);
+  // Вызов изменения содержимого таблицы (ставится *)
+  connect(_switches, &TableModel::wasModified, this, &MainWindow::setModified);
+  // Вызов "О программе"
+  connect(ui->actionAboutProgramm, &QAction::triggered,  this, &MainWindow::aboutProgramm);
+  // Вызов открытия нового окна
+  connect(ui->actionNew   , &QAction::triggered,  this, &MainWindow::actionNew_triggered);
   // Вызов открытия файла
   connect(ui->actionOpen  , &QAction::triggered,  this, &MainWindow::actionOpen_triggered);
   // Вызов сохранения файла
@@ -60,10 +76,18 @@ void MainWindow::createConnections()
   connect(ui->actionSaveAs, &QAction::triggered,  this, &MainWindow::actionSaveAs_triggered);
   // Вызов закрытия файла
   connect(ui->actionClose , &QAction::triggered,  this, &MainWindow::actionClose_triggered);
+  // Вызов закрытия приложения (всех его окон)
+  connect(ui->actionExit  , &QAction::triggered,  qApp, &QApplication::closeAllWindows);
   // Вызов добавления записи
   connect(ui->actionAdd   , &QAction::triggered,  this, &MainWindow::actionAdd_triggered);
   // Вызов удаления записи
   connect(ui->actionRemove, &QAction::triggered,  this, &MainWindow::actionRemove_triggered);
+  // Вызов графика цены
+  connect(ui->actionPrice , &QAction::triggered,  this, &MainWindow::actionPrice_triggered);
+  // Вызов графика количества портов
+  connect(ui->actionPortCount, &QAction::triggered, this, &MainWindow::actionPortCount_triggered);
+  // Выозов графика объема
+  connect(ui->actionVolume, &QAction::triggered, this, &MainWindow::actionVolume_triggered);
 }
 
 MainWindow::~MainWindow()
@@ -76,6 +100,12 @@ MainWindow::~MainWindow()
   delete _switches;
   delete languageActionGroup;
   delete ui;
+}
+
+void MainWindow::setModified()
+{
+  if (!isWindowModified())
+    setWindowModified(true);
 }
 
 void MainWindow::switchLanguage(QAction *action)
@@ -134,16 +164,42 @@ void MainWindow::createLanguageMenu()
     }
 }
 
+void MainWindow::actionNew_triggered()
+{
+  MainWindow *mainWindow = new MainWindow;
+  mainWindow->move(pos() + QPoint(30, 30));
+  mainWindow->show();
+}
+
+void MainWindow::setCurrentFile(const QString &fullFileName)
+{
+    currentFileName = fullFileName;
+    setWindowModified(false);
+    isUntitled = false;
+
+    QString showName;
+
+    if (currentFileName.isEmpty()) {
+        showName = "untitled.txt";
+        currentFileName = showName;
+    }
+    else
+        showName = QFileInfo(currentFileName).fileName();
+
+    setWindowTitle(tr("%1[*] - %2")
+                   .arg(showName, tr("Switch")));
+}
+
 void MainWindow::actionOpen_triggered()
 {
   if (_switches->rowCount(QModelIndex())) {
       if (QMessageBox::Yes == QMessageBox::question(this,
-                     tr("Save and close"),
-                     tr("Do you want to save and close "
-                        "%1 before opening of "
-                        "new file?").arg(QFileInfo(currentFileName).fileName()),
-                      QMessageBox::Yes |
-                      QMessageBox::Cancel)) {
+                                                    tr("Save and close"),
+                                                    tr("Do you want to save and close "
+                                                       "%1 before opening of "
+                                                       "new file?").arg(QFileInfo(currentFileName).fileName()),
+                                                    QMessageBox::Yes |
+                                                    QMessageBox::Cancel)) {
           actionSave_triggered();
           actionClose_triggered();
         } else {
@@ -151,13 +207,14 @@ void MainWindow::actionOpen_triggered()
         }
     }
 
-  currentFileName = QFileDialog::getOpenFileName(this, tr("Open Document"));
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Document"));
 
   if (!currentFileName.isEmpty()) {
-      openFile(currentFileName);
+      openFile(fileName);
     }
-}
 
+  setCurrentFile(fileName);
+}
 
 void MainWindow::openFile(const QString& fullFileName)
 {
@@ -221,11 +278,15 @@ void MainWindow::openFile(const QString& fullFileName)
   ui->actionClose->setEnabled(true);
   ui->menuEntry->setEnabled(true);
   ui->lineEditFind->setEnabled(true);
+  ui->menuGraphics->setEnabled(true);
 }
 
 void MainWindow::actionSave_triggered()
 {
-  saveFile(currentFileName);
+  if (isUntitled)
+    actionSaveAs_triggered();
+  else
+    saveFile(currentFileName);
 }
 
 void MainWindow::actionSaveAs_triggered()
@@ -268,11 +329,13 @@ void MainWindow::saveFile(const QString &fullFileName)
   file.close();
 
   QApplication::restoreOverrideCursor();
+
+  setCurrentFile(fullFileName);
 }
 
 void MainWindow::aboutProgramm()
 {
-  auto aboutWin = new AboutProgramm(this);
+  AboutProgramm *aboutWin = new AboutProgramm(this);
   aboutWin->setWindowFlag(Qt::Window);
   aboutWin->setWindowTitle(tr("About programm"));
   aboutWin->setFixedSize(aboutWin->size());
@@ -285,13 +348,14 @@ void MainWindow::actionClose_triggered()
   proxyModel->setSourceModel(nullptr);
 
   _switches->clear();
-  currentFileName = QString();
+  setCurrentFile(QString());
 
   ui->actionSave->setEnabled(false);
   ui->actionSaveAs->setEnabled(false);
   ui->actionClose->setEnabled(false);
   ui->menuEntry->setEnabled(false);
   ui->lineEditFind->setEnabled(false);
+  ui->menuGraphics->setEnabled(false);
 }
 
 void MainWindow::customMenuRequested(QPoint pos)
@@ -305,12 +369,14 @@ void MainWindow::actionAdd_triggered()
   if (currentFileName.isEmpty()) {
       QMessageBox::warning(this,
                            tr("Error of appending"),
-                           tr("Can not append entry. Probably, table is empty..."));
+                           tr("Can not append entry. Probably, file is not open..."));
       return;
     }
 
   // Добавление записи
   _switches->insertRows(0, 1);
+
+  setModified();
 
   for (int row = _switches->rowCount(); row >= 0 ; --row) {
        QModelIndex indexItem = proxyModel->index(row, 1);
@@ -332,17 +398,22 @@ void MainWindow::actionRemove_triggered()
 
   // Удаление выделенной строки
   int row = proxyModel->mapToSource(ui->tableView->currentIndex()).row();
+
+  setModified();
+
   _switches->removeRows(row, 1);
 }
 
 void MainWindow::lineEditFind_textChanged(const QString& text)
 {
-  //Устанавливаем регулярное выражения для фильтра
+  // Устанавливаем регулярное выражения для фильтра
   QRegExp::PatternSyntax syntax = QRegExp::PatternSyntax(QRegExp::FixedString);
   QRegExp regExp(text, Qt::CaseInsensitive, syntax);
 
-  //Устанавливаем все колонки фильтрации при поиске
-  proxyModel->setFilterKeyColumn(-1);
+  int columnIndex = ui->comboBoxHeaders->currentIndex() - 1;
+
+  // Устанавливаем номер колонки фильтрации
+  proxyModel->setFilterKeyColumn(columnIndex);
   proxyModel->setFilterRegExp(regExp);
 }
 
@@ -362,4 +433,96 @@ void MainWindow::writeSettings()
 
   settings.setValue("checkedLanguage", checkedLanguage);
   settings.setValue("geometryMainWindow", saveGeometry());
+}
+
+
+void MainWindow::actionPrice_triggered()
+{
+  Graphics* graphicWindow = createChart();
+
+  if (graphicWindow == nullptr)
+    return;
+
+  graphicWindow->Price();
+}
+
+void MainWindow::actionPortCount_triggered()
+{
+  Graphics* graphicWindow = createChart();
+
+  if (graphicWindow == nullptr)
+    return;
+
+  graphicWindow->PortCount();
+}
+
+void MainWindow::actionVolume_triggered()
+{
+  Graphics* graphicWindow = createChart();
+
+  if (graphicWindow == nullptr)
+    return;
+
+  graphicWindow->Volume();
+}
+
+Graphics *MainWindow::createChart()
+{
+  if (_switches->rowCount() < 2)
+  {
+      QMessageBox::warning(this, tr("Result"), tr("Few records"));
+      return nullptr;
+  }
+
+  Graphics* graphicWindow = new Graphics(_switches->toQList());
+  graphicWindow->setWindowFlag(Qt::Window);
+  graphicWindow->setWindowTitle(QFileInfo(currentFileName).fileName() + tr(" - Charts"));
+  graphicWindow->setAttribute(Qt::WA_DeleteOnClose);
+  graphicWindow->show();
+
+  return graphicWindow;
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent* event)
+{
+  foreach (auto url, event->mimeData()->urls())
+    {
+      QFileInfo fileName(url.toLocalFile());
+
+      if (fileName.fileName() != "")
+        {
+          if (!fileName.isDir())
+            {
+              if (fileName.completeSuffix() == "txt")
+                {
+                  event->accept();
+                  return;
+                }
+            }
+        }
+      event->ignore();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+  foreach (auto url, event->mimeData()->urls())
+    {
+      if (_switches->rowCount(QModelIndex())) {
+          if (QMessageBox::Yes == QMessageBox::question(this,
+                                                        tr("Save and close"),
+                                                        tr("Do you want to save and close "
+                                                           "%1 before opening of "
+                                                           "new file?").arg(QFileInfo(currentFileName).fileName()),
+                                                        QMessageBox::Yes |
+                                                        QMessageBox::Cancel)) {
+              actionSave_triggered();
+              actionClose_triggered();
+            } else {
+              return;
+            }
+        }
+
+      openFile(url.toLocalFile());
+    }
 }

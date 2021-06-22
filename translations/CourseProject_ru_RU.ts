@@ -29,175 +29,261 @@
         <translation>ИЭУИС 2-5</translation>
     </message>
     <message>
-        <location filename="../aboutprogramm.ui" line="107"/>
+        <location filename="../aboutprogramm.ui" line="112"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
 </context>
 <context>
-    <name>MainWindow</name>
+    <name>Graphics</name>
     <message>
-        <source>MainWindow</source>
-        <translation type="vanished">Основное окно</translation>
+        <location filename="../graphics.ui" line="14"/>
+        <source>Form</source>
+        <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="62"/>
+        <location filename="../graphics.cpp" line="61"/>
+        <source>Prices</source>
+        <translation>Цены</translation>
+    </message>
+    <message>
+        <location filename="../graphics.cpp" line="63"/>
+        <source>Port Count</source>
+        <translation>Количество портов</translation>
+    </message>
+    <message>
+        <location filename="../graphics.cpp" line="65"/>
+        <source>Volume</source>
+        <translation>Объем</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message>
+        <location filename="../mainwindow.ui" line="112"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <source>Entry</source>
-        <translation type="vanished">Запись</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="20"/>
-        <location filename="../mainwindow.cpp" line="28"/>
+        <location filename="../mainwindow.cpp" line="56"/>
+        <location filename="../mainwindow.cpp" line="190"/>
         <source>Switch</source>
         <translation>Коммутатор</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="36"/>
-        <source>Find</source>
-        <translation>Найти</translation>
+        <source>Search and Filter</source>
+        <translation>Поиск и фильтр</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="77"/>
+        <location filename="../mainwindow.ui" line="45"/>
+        <source>All</source>
+        <translation>Все</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="50"/>
+        <source>Manufacturer</source>
+        <translation>Производитель</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="55"/>
+        <source>Model</source>
+        <translation>Модель</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="60"/>
+        <source>Base baud rate</source>
+        <translation>Базовая скорость передачи</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="65"/>
+        <source>Number of ports</source>
+        <translation>Количество портов</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="70"/>
+        <source>PoE support</source>
+        <translation>Поддержка PoE</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="75"/>
+        <source>Dimensions</source>
+        <translation>Размеры</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="80"/>
+        <location filename="../mainwindow.ui" line="282"/>
+        <source>Price</source>
+        <translation>Цена</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="128"/>
         <source>Edit table</source>
         <translation>Редактирование таблицы</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="84"/>
+        <location filename="../mainwindow.ui" line="135"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="89"/>
+        <location filename="../mainwindow.ui" line="140"/>
         <source>Reference</source>
         <translation>Справка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="101"/>
+        <location filename="../mainwindow.ui" line="149"/>
+        <source>Graphics</source>
+        <translation>Графика</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="164"/>
         <source>toolBar</source>
         <translation>Панель инструментов</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="122"/>
+        <location filename="../mainwindow.ui" line="186"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="131"/>
+        <location filename="../mainwindow.ui" line="195"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="143"/>
+        <location filename="../mainwindow.ui" line="207"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="182"/>
-        <location filename="../mainwindow.cpp" line="270"/>
+        <location filename="../mainwindow.ui" line="246"/>
+        <location filename="../mainwindow.cpp" line="340"/>
         <source>About programm</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="194"/>
-        <location filename="../mainwindow.ui" line="197"/>
+        <location filename="../mainwindow.ui" line="258"/>
+        <location filename="../mainwindow.ui" line="261"/>
         <source>Save as ...</source>
         <translation>Сохранить как ...</translation>
     </message>
     <message>
-        <source>Show</source>
-        <translation type="vanished">Показать</translation>
+        <location filename="../mainwindow.ui" line="270"/>
+        <source>New</source>
+        <translation>Новый</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="152"/>
+        <location filename="../mainwindow.ui" line="291"/>
+        <source>Port Count</source>
+        <translation>Количество портов</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="300"/>
+        <source>Volume</source>
+        <translation>Объем</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="216"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="161"/>
+        <location filename="../mainwindow.ui" line="225"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <translation type="vanished">Редактировать</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="173"/>
+        <location filename="../mainwindow.ui" line="237"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="109"/>
+        <location filename="../mainwindow.cpp" line="55"/>
+        <location filename="../mainwindow.cpp" line="189"/>
+        <source>%1[*] - %2</source>
+        <translation>%1[*] - %2</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="140"/>
         <source>English</source>
         <translation>Русский</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="111"/>
+        <location filename="../mainwindow.cpp" line="142"/>
         <source>&amp;%1 %2</source>
         <translation>&amp;%1 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="140"/>
+        <location filename="../mainwindow.cpp" line="197"/>
+        <location filename="../mainwindow.cpp" line="513"/>
         <source>Save and close</source>
         <translation>Сохранить и закрыть</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="141"/>
+        <location filename="../mainwindow.cpp" line="198"/>
+        <location filename="../mainwindow.cpp" line="514"/>
         <source>Do you want to save and close %1 before opening of new file?</source>
         <translation>Вы хотите сохранить и закрыть %1 перед открытием нового файла?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="153"/>
-        <location filename="../mainwindow.cpp" line="166"/>
+        <location filename="../mainwindow.cpp" line="210"/>
+        <location filename="../mainwindow.cpp" line="224"/>
         <source>Open Document</source>
         <translation>Открыть документ</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="167"/>
+        <location filename="../mainwindow.cpp" line="225"/>
         <source>Can not read file %1:
 %2</source>
         <translation>Не удается прочитать файл %1:
 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="240"/>
+        <location filename="../mainwindow.cpp" line="308"/>
         <source>Can not write file %1:
 %2</source>
         <translation>Не удается записать файл %1:
 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="300"/>
+        <location filename="../mainwindow.cpp" line="371"/>
         <source>Error of appending</source>
         <translation>Ошибка добавления</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="301"/>
-        <source>Can not append entry. Probably, table is empty...</source>
-        <translation>Невозможно добавить запись. Наверное, таблица пуста ...</translation>
+        <location filename="../mainwindow.cpp" line="372"/>
+        <source>Can not append entry. Probably, file is not open...</source>
+        <translation>Невозможно добавить запись. Вероятно, файл не открыт ...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="321"/>
+        <location filename="../mainwindow.cpp" line="473"/>
+        <source>Result</source>
+        <translation>Результат</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="473"/>
+        <source>Few records</source>
+        <translation>Мало записей</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="479"/>
+        <source> - Charts</source>
+        <translation> - Графики</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="394"/>
         <source>Error of removing</source>
         <translation>Ошибка удаления</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="322"/>
+        <location filename="../mainwindow.cpp" line="395"/>
         <source>Can not removing entry. Probably, table is empty...</source>
         <translation>Невозможно удалить запись. Наверное, таблица пуста ...</translation>
     </message>
     <message>
-        <source>Can not read file &amp;1:
-%2</source>
-        <translation type="obsolete">Не удается прочитать файл &amp;</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="226"/>
-        <location filename="../mainwindow.cpp" line="239"/>
+        <location filename="../mainwindow.cpp" line="294"/>
+        <location filename="../mainwindow.cpp" line="307"/>
         <source>Save Document</source>
         <translation>Сохранить документ</translation>
     </message>
