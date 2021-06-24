@@ -209,7 +209,7 @@ void MainWindow::actionOpen_triggered()
 
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open Document"));
 
-  if (!currentFileName.isEmpty()) {
+  if (!fileName.isEmpty()) {
       openFile(fileName);
     }
 
@@ -429,16 +429,20 @@ void MainWindow::writeSettings()
 {
   QSettings settings("MySoft", "CourseProject");
 
-  QString checkedLanguage = languageActionGroup->checkedAction()->data().toString();
+  QAction *currentLang = languageActionGroup->checkedAction();
 
-  settings.setValue("checkedLanguage", checkedLanguage);
+  if (currentLang) {
+      QString checkedLanguage = currentLang->data().toString();
+      settings.setValue("checkedLanguage", checkedLanguage);
+    }
+
   settings.setValue("geometryMainWindow", saveGeometry());
 }
 
 
 void MainWindow::actionPrice_triggered()
 {
-  Graphics* graphicWindow = createChart();
+  Graphics *graphicWindow = createChart();
 
   if (graphicWindow == nullptr)
     return;
@@ -448,7 +452,7 @@ void MainWindow::actionPrice_triggered()
 
 void MainWindow::actionPortCount_triggered()
 {
-  Graphics* graphicWindow = createChart();
+  Graphics *graphicWindow = createChart();
 
   if (graphicWindow == nullptr)
     return;
@@ -458,7 +462,7 @@ void MainWindow::actionPortCount_triggered()
 
 void MainWindow::actionVolume_triggered()
 {
-  Graphics* graphicWindow = createChart();
+  Graphics *graphicWindow = createChart();
 
   if (graphicWindow == nullptr)
     return;
@@ -474,7 +478,7 @@ Graphics *MainWindow::createChart()
       return nullptr;
   }
 
-  Graphics* graphicWindow = new Graphics(_switches->toQList());
+  Graphics *graphicWindow = new Graphics(_switches->toQList());
   graphicWindow->setWindowFlag(Qt::Window);
   graphicWindow->setWindowTitle(QFileInfo(currentFileName).fileName() + tr(" - Charts"));
   graphicWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -523,6 +527,9 @@ void MainWindow::dropEvent(QDropEvent *event)
             }
         }
 
-      openFile(url.toLocalFile());
+      QString fileName = url.toLocalFile();
+
+      openFile(fileName);
+      setCurrentFile(fileName);
     }
 }

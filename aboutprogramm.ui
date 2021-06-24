@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>356</width>
-    <height>127</height>
+    <width>710</width>
+    <height>163</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,6 +48,18 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLabel" name="labelSubject">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Subject:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -76,6 +88,21 @@
          </property>
          <property name="text">
           <string>IEMIS 2-5</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEditSubject">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Development of software in C++/Qt for accounting of PC components &quot;Switch&quot;</string>
          </property>
          <property name="readOnly">
           <bool>true</bool>

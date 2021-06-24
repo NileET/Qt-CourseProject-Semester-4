@@ -193,7 +193,10 @@ private:
    */
   void writeSettings();
 
-
+  /**
+   * @brief createChart - создатель графика
+   * @return - возвращает указатель на созданный график
+   */
   Graphics* createChart();
 
 protected:
