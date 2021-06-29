@@ -19,17 +19,27 @@
         <translation>Группа:</translation>
     </message>
     <message>
-        <location filename="../aboutprogramm.ui" line="63"/>
+        <location filename="../aboutprogramm.ui" line="59"/>
+        <source>Subject:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutprogramm.ui" line="75"/>
         <source>Daniil Andreevich Zholudev</source>
         <translation>Жолудев Даниил Андреевич</translation>
     </message>
     <message>
-        <location filename="../aboutprogramm.ui" line="78"/>
+        <location filename="../aboutprogramm.ui" line="90"/>
         <source>IEMIS 2-5</source>
         <translation>ИЭУИС 2-5</translation>
     </message>
     <message>
-        <location filename="../aboutprogramm.ui" line="112"/>
+        <location filename="../aboutprogramm.ui" line="105"/>
+        <source>Development of software in C++/Qt for accounting of PC components &quot;Switch&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutprogramm.ui" line="139"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
@@ -216,13 +226,13 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="197"/>
-        <location filename="../mainwindow.cpp" line="513"/>
+        <location filename="../mainwindow.cpp" line="517"/>
         <source>Save and close</source>
         <translation>Сохранить и закрыть</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="198"/>
-        <location filename="../mainwindow.cpp" line="514"/>
+        <location filename="../mainwindow.cpp" line="518"/>
         <source>Do you want to save and close %1 before opening of new file?</source>
         <translation>Вы хотите сохранить и закрыть %1 перед открытием нового файла?</translation>
     </message>
@@ -257,17 +267,17 @@
         <translation>Невозможно добавить запись. Вероятно, файл не открыт ...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="473"/>
+        <location filename="../mainwindow.cpp" line="477"/>
         <source>Result</source>
         <translation>Результат</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="473"/>
+        <location filename="../mainwindow.cpp" line="477"/>
         <source>Few records</source>
         <translation>Мало записей</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="479"/>
+        <location filename="../mainwindow.cpp" line="483"/>
         <source> - Charts</source>
         <translation> - Графики</translation>
     </message>
